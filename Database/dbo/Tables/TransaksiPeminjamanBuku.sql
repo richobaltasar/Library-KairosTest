@@ -5,5 +5,6 @@
     [SewaDari] NVARCHAR(MAX) NULL, 
     [Sewasampai] NVARCHAR(MAX) NULL, 
     [TotalSewa] NCHAR(10) NULL, 
-    [Status] BIGINT NULL
+    [Status] BIGINT NULL, 
+    [IdUser_Penyewa] BIGINT NULL
 )

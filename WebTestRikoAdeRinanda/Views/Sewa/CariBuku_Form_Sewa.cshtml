@@ -6,7 +6,7 @@
     MasterFunction f = new MasterFunction();
     var formData = new FormMasterData();
 }
-@model
+@model FormPeminjamanBuku
 @{
     if (Model.Error == null)
     {
@@ -20,20 +20,19 @@
         @{
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-4">            
+                    <div class="col-sm-6">            
                         <img src="~/@Model.Img" style="width:100%;border-radius:10px 10px;" class="shadow" />
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
                         @{
-                            formData.Template = f.GetFormLayout("Form BukuData");
-                            formData.ColField = 3;
+                            formData.Template = f.GetFormLayout("Form FormPeminjamanBuku");
+                            formData.ColField = 1;
                             if (Model != null)
                             {
                                 formData.dbContext = Model;
                             }
                             @await Html.PartialAsync("_LayoutForm", formData)
                         }
-
                     </div>
                 </div>
             </div>

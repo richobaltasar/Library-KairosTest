@@ -64,7 +64,7 @@ namespace WebTestRikoAdeRinanda.Controllers
         [NoDirectAccess]
         public async Task<IActionResult> CariBuku_Form_Sewa(int id = 0)
         {
-            var model = new BukuData();
+            var model = new FormPeminjamanBuku();
             try
             {
                 if (id == 0)
@@ -74,7 +74,7 @@ namespace WebTestRikoAdeRinanda.Controllers
                 }
                 else
                 {
-                    model = await f.BukuData_GetById(id);
+                    model = await f.FormPeminjaman_GetById(id);
 
                     if (model == null)
                     {
@@ -97,16 +97,16 @@ namespace WebTestRikoAdeRinanda.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BukuData_Search([Bind("AllText")] CariBuku data)
+        public async Task<IActionResult> CariBuku_Search([Bind("AllText")] CariBuku data)
         {
-            var model = new BukuDataModel();
+            var model = new CariBukuModel();
             var r = new ErrorViewModel();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    model.ListData = await f.CariBuku_GetSearch(data);
-                    return await Task.Run(() => Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "BukuData_Table", model) }));
+                    model.DataBuku = await f.CariBuku_GetSearch(data);
+                    return await Task.Run(() => Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "CariBuku_Grid", model) }));
                 }
                 catch (Exception ex)
                 {
@@ -114,13 +114,13 @@ namespace WebTestRikoAdeRinanda.Controllers
                     r.MessageTitle = "Error ";
                     r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
                     model.Error = r;
-                    model.ListData = await f.BukuData_Get();
+                    
                     return await Task.Run(() => Json(new
                     {
                         isValid = false,
                         message = r.MessageContent,
                         title = r.MessageTitle,
-                        html = Helper.RenderRazorViewToString(this, "BukuData_Table", model)
+                        html = Helper.RenderRazorViewToString(this, "CariBuku_Grid", model)
                     }));
                 }
             }
@@ -130,13 +130,13 @@ namespace WebTestRikoAdeRinanda.Controllers
                 r.MessageTitle = "Error ";
                 r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
                 model.Error = r;
-                model.ListData = await f.BukuData_Get();
+                //model.ListData = await f.BukuData_Get();
                 return await Task.Run(() => Json(new
                 {
                     isValid = false,
                     message = r.MessageContent,
                     title = r.MessageTitle,
-                    html = Helper.RenderRazorViewToString(this, "BukuData_Table", model)
+                    html = Helper.RenderRazorViewToString(this, "CariBuku_Grid", model)
                 }));
             }
         }

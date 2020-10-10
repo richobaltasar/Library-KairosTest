@@ -2332,10 +2332,10 @@ namespace WebTestRikoAdeRinanda.Function
                 {
                     connection.Open();
                     string sql = "exec SP_CariBuku_GetSearch " +
-                        "@AllText=" + Data.AllText+"," +
-                        "@JudulBuku=" + Data.JudulBuku + "," +
-                        "@Pengarang=" + Data.Pengarang + "," +
-                        "@Pengarang=" + Data.Pengarang + "" +
+                        "@AllText='" + Data.AllText+"'," +
+                        "@JudulBuku='" + Data.JudulBuku + "'," +
+                        "@Pengarang='" + Data.Pengarang + "'," +
+                        "@JenisBuku='" + Data.JenisBuku + "'" +
                         "";
                     
                     using (var command = new SqlCommand(sql, connection))
@@ -2346,26 +2346,13 @@ namespace WebTestRikoAdeRinanda.Function
                             while (reader.Read())
                             {
                                 var d = new BukuData();
-                                Type type = d.GetType();
-                                PropertyInfo[] props = type.GetProperties();
-                                foreach (var p in props)
-                                {
-                                    if (null != p && p.CanWrite)
-                                    {
-                                        if (p.Name != "" && p.Name != "Error" && p.PropertyType.Name.ToString() != "IFormFile")
-                                        {
-                                            if (p.PropertyType.Name.ToString() == "Int32")
-                                            {
-                                                int val = reader[p.Name].ToString().AsInt() ?? 0;
-                                                p.SetValue(d, val, null);
-                                            }
-                                            else
-                                            {
-                                                p.SetValue(d, reader[p.Name].ToString(), null);
-                                            }
-                                        }
-                                    }
-                                }
+                                d.IdBook = reader["IdBook"].ToString().ToInt();
+                                d.JudulBuku = reader["JudulBuku"].ToString();
+                                d.Pengarang = reader["Pengarang"].ToString();
+                                d.JenisBuku = reader["JenisBuku"].ToString();
+                                d.HargaSewaPerHari = reader["HargaSewaPerHari"].ToString();
+                                d.Img = reader["Img"].ToString();
+                                d.Status = reader["Status"].ToString().ToInt();
                                 res.Add(d);
                             }
                         }
@@ -2379,6 +2366,47 @@ namespace WebTestRikoAdeRinanda.Function
             return res;
         }
 
+        public async Task<FormPeminjamanBuku> FormPeminjaman_GetById(int Id)
+        {
+            var res = new FormPeminjamanBuku();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_FormPeminjaman_GetById @Id=" + Id + "" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                res.IdBook = reader["IdBook"].ToString().ToInt();
+                                res.JudulBuku = reader["JudulBuku"].ToString();
+                                res.Pengarang = reader["Pengarang"].ToString();
+                                res.JenisBuku = reader["JenisBuku"].ToString();
+                                res.HargaSewaPerHari = reader["HargaSewaPerHari"].ToString();
+                                res.Img = reader["Img"].ToString();
+                                res.Status = reader["Status"].ToString().ToInt();
+                                //res.SewaDari = reader["SewaDari"].ToString();
+                                //res.Sewasampai = reader["Sewasampai"].ToString();
+                                //res.TotalSewa = reader["TotalSewa"].ToString();
+
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
         #endregion
     }
 }

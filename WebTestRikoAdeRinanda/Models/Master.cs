@@ -229,11 +229,14 @@ namespace WebTestRikoAdeRinanda.Models
         public string JenisBuku { get; set; }
         public string HargaSewaPerHari { get; set; }
         public string Img { get; set; }
+        public int Status { get; set; }
 
         public string SewaDari { get; set; }
         public string Sewasampai { get; set; }
         public string TotalSewa { get; set; }
-
+        public string IdUser_Penyewa { get; set; }
+        
+        public ErrorViewModel Error { get; set; }
     }
 
     public class CariBukuModel

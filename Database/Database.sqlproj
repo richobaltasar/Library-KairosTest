@@ -232,6 +232,7 @@
     <Build Include="dbo\Tables\TransaksiPeminjamanBuku.sql" />
     <Build Include="dbo\Stored Procedures\CariBuku\SP_CariBuku_GetSearch.sql" />
     <Build Include="dbo\Stored Procedures\General\sp_FindStringInTable_with_flag.sql" />
+    <Build Include="dbo\Stored Procedures\CariBuku\SP_FormPeminjaman_GetById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />
