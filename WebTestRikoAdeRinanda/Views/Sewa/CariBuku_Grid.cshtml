@@ -1,0 +1,87 @@
+﻿
+@model CariBukuModel
+
+@if (Model.Error != null)
+{
+    @await Html.PartialAsync("Error", Model.Error)
+}
+<style type="text/css">
+    .shadow {
+        -moz-box-shadow: 3px 3px 5px 6px #ccc;
+        -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+        box-shadow: 3px 3px 5px 6px #ccc;
+    }
+    .slider {
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .slides {
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+
+        .slides::-webkit-scrollbar {
+            width: 1px;
+            height: 0px;
+            color: #9C5E95;
+        }
+
+        .slides::-webkit-scrollbar-thumb {
+            background-color: #4c8f5f;
+            border-radius: 0px;
+        }
+
+        .slides::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .slides > div {
+            flex-shrink: 0;
+            width: 60px;
+            height: 70px;
+            padding: 2px 2px 2px 2px;
+            margin: 2px 2px 2px 2px;
+            border-radius: 10px;
+            background: white;
+            border: 1px solid #9C5E95;
+            transform-origin: center center;
+            transform: scale(1);
+            transition: transform 0.5s;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            vertical-align: central;
+        }
+
+</style>
+<div class="row">
+    @{
+        foreach (var item in Model.DataBuku)
+        {
+            <div class="col-lg-3 col-md-6">
+                <!-- Card -->
+                <div class="card shadow" style="border-radius:20px 20px;">
+                    <img class="card-img-top img-responsive" src="~/@item.Img" alt="Card image cap" style="border-top-left-radius:20px;border-top-right-radius:20px;height:300px;">
+                    <div class="card-body slides" style="height:150px;">
+                        <h4 style="margin-bottom:0px;">@item.JudulBuku</h4>
+                        <p style="font-style:italic;margin:0px 0px 0px 0px;color:dimgray;font-size:small;">Author by @item.Pengarang</p>
+                        <br />
+                        <strong>Kategory buku @item.JenisBuku </strong>
+                        <br />
+                        <strong>Sewa Rp @item.HargaSewaPerHari.toNumber()/Hari </strong>
+
+                    </div>
+                    <div class="card-footer" style="text-align:center;">
+                        <button class="btn btn-outline-success" onclick="showInPopup('@Url.Action("CariBuku_Form_Sewa","Sewa",new { id=item.IdBook},Context.Request.Scheme)','Form Peminjaman')">Pinjam</button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

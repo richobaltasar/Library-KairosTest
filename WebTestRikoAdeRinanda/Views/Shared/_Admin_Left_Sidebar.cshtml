@@ -1,0 +1,99 @@
+﻿@model LeftSidebarModel
+@{
+    GlobalFunction f = new GlobalFunction();
+}
+<aside class="left-sidebar">
+    <!-- Sidebar scroll-->
+    <div class="scroll-sidebar">
+        <!-- User Profile-->
+        <div class="user-profile">
+            <div class="user-pro-body">
+                <div><img src="~/@Model.user.Photo" width="30" alt="user-img" class="img-circle"></div>
+                <div class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle u-dropdown link hide-menu" data-toggle="dropdown" 
+                       role="button" aria-haspopup="true" aria-expanded="false">
+                        @Model.user.NamaLengkap <span class="caret"></span>
+                    </a>
+                    <div class="dropdown-menu animated flipInY">
+                        @await Html.PartialAsync("_UserProfile_Menu", null)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav">
+                @{
+                    var modul = f.GetModulByAkses(ViewData["UserId"].ToString());
+                    foreach (var dModule in modul)
+                    {
+                        <li class="nav-small-cap">--- @dModule.NamaModule</li>
+                        var MainMenu = f.GetMenuByAkses(ViewData["UserId"].ToString(), dModule.IdModul.ToString(), "1");
+                        if (MainMenu.Count > 0)
+                        {
+                            foreach (var dMainMenu in MainMenu)
+                            {
+
+                                <li>
+
+                                    @{
+                                        var SubMenu = f.GetMenuByAkses(ViewData["UserId"].ToString(), dMainMenu.idMenu.ToString(), "2");
+                                        if (SubMenu.Count > 0)
+                                        {
+                                            <a class="has-arrow waves-effect waves-dark" href="@Url.Action(dMainMenu.Action,dMainMenu.Controller)" aria-expanded="false">
+                                                <img src="~/@dMainMenu.Img" style="max-width:20px;" />
+                                                <span class="hide-menu">
+                                                    @dMainMenu.NamaMenu
+                                                <span class="badge badge-pill badge-cyan ml-auto">@SubMenu.Count</span>
+                                                    </span>
+                                                </a>
+                                        <ul aria-expanded="false" class="collapse">
+                                            @{
+                                                foreach (var dSubMenu in SubMenu)
+                                                {
+                                                    <li><a href="@Url.Action(dSubMenu.Action,dSubMenu.Controller)">@dSubMenu.NamaMenu</a></li>
+                                                }
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <a class="waves-effect waves-dark" href="@Url.Action(dMainMenu.Action,dMainMenu.Controller)" aria-expanded="false">
+                                            <img src="~/@dMainMenu.Img" style="max-width:20px;" />
+                                            <span class="hide-menu">
+                                                @dMainMenu.NamaMenu
+                                            </span>
+                                        </a>
+                                    }
+                                    }
+                                </li>
+                            }
+                        }
+                    }
+                }
+
+
+                @*<li class="nav-small-cap">--- Template</li>
+                <li>
+                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-speedometer"></i><span class="hide-menu">Master <span class="badge badge-pill badge-cyan ml-auto">4</span></span></a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li><a href="@Url.Action("ModuleData","Master")">Module Data</a></li>
+                        <li><a href="@Url.Action("MenuData","Master")">Menu Data</a></li>
+                        <li><a href="@Url.Action("FormData","Master")">Form Data</a></li>
+                        <li><a href="@Url.Action("ListItemData","Master")">List Item Data</a></li>
+
+                        <li><a href="@Url.Action("RoleMenuData","Master")">Role Menu</a></li>
+                        <li><a href="@Url.Action("RoleGroupAkses","Master")">Role Group Akses</a></li>
+
+                    </ul>
+                </li>*@
+                
+            </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+</aside>
+<script>
+    
+</script>

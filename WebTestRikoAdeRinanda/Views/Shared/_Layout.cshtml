@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon.ico">
+
+    <title>Library System</title>
+
+
+    <!-- Bootstrap popper Core JavaScript -->
+    <link href="~/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/assets/jquery/jquery-3.2.1.min.js"></script>
+    <script src="~/assets/popper/popper.min.js"></script>
+    <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+    <!-- Bootstrap popper Core JavaScript -->
+    <!-- End Bootstrap popper Core JavaScript -->
+    <!--MorisJS-->
+    <link href="~/assets/morrisjs/morris.css" rel="stylesheet">
+    <script src="~/assets/raphael/raphael-min.js"></script>
+    <script src="~/assets/morrisjs/morris.min.js"></script>
+    <script src="~/assets/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <!--End MorisJS-->
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="~/js/perfect-scrollbar.jquery.min.js"></script>
+
+    <!--Wave Effects -->
+    <script src="~/js/waves.js"></script>
+
+    <!--Menu sidebar -->
+    <script src="~/js/sidebarmenu.js"></script>
+
+    <!--Sky Icons JavaScript -->
+    <script src="~/assets/skycons/skycons.js"></script>
+
+    <!--Date picket bootstrap-->
+    <script src="~/assets/datepicker/bootstrap-datepicker.min.js"></script>
+    <link href="~/assets/datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+
+    <link href="~/assets/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" />
+    <script src="~/assets/bootstrap-select/bootstrap-select.min.js"></script>
+
+    <link href="~/assets/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="~/assets/datatables/jquery.dataTables.min.js"></script>
+    @*<link href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" rel="stylesheet" />
+        <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>*@
+
+
+    <!--cleave auto number-->
+    <script src="~/assets/cleave/cleave.min.js"></script>
+    <script src="~/assets/cleave/cleave-phone.i18n.js"></script>
+    <!--stickey kit -->
+    <script src="~/assets/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <script src="~/assets/sparkline/jquery.sparkline.min.js"></script>
+
+    <script src="~/assets/notify/notify.min.js"></script>
+    <!--Custom JavaScript -->
+    <link href="~/css/style.min.css" rel="stylesheet">
+    <script src="~/js/custom.js"></script>
+
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="skin-purple-dark fixed-layout">
+    <div class="preloader">
+        <div class="loader">
+            <div class="card">
+                <div class="card-body" style="text-align:center;">
+                    <img src="~/images/Animation/chair.gif" width="200" style="margin-left:-100px;"/>
+                    <p class="loader__label" style="margin-top:-20px;">Mohon bersabar...</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div id="main-wrapper">
+       @{
+           GlobalFunction f = new GlobalFunction();
+           var userdata = f.GetProfileUser(int.Parse(ViewBag.UserId));
+           var modelTopBar = new TopbarModel();
+           modelTopBar.user = userdata;
+        }
+        @await Html.PartialAsync("_Admin_TopBar", modelTopBar)
+        @{ 
+            var modelLeftbar = new LeftSidebarModel();
+            modelLeftbar.user = userdata;
+        }
+        @await Html.PartialAsync("_Admin_Left_Sidebar", modelLeftbar)
+        <div class="page-wrapper">
+            <div class="container-fluid">
+                <div id="view-page">
+                    @RenderBody()
+                </div>
+                @{
+                    var modelRightbar = new RightSidebarModel();
+                    modelRightbar.user = userdata;
+                }
+                @await Html.PartialAsync("_Admin_Right_Sidebar", modelRightbar)
+            </div>
+        </div>
+
+        @await Html.PartialAsync("_Admin_Footer", null)
+    </div>
+</body>
+</html>

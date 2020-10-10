@@ -1,0 +1,179 @@
+﻿
+@model BukuDataModel
+
+@if (Model.Error != null)
+{
+    @await Html.PartialAsync("Error", Model.Error)
+}
+
+<div class="row">
+    @{
+        foreach (var item in Model.ListData)
+        {
+            <div class="col-lg-3 col-md-6">
+                <!-- Card -->
+                <div class="card">
+                    <img class="card-img-top img-responsive" src="~/@item.Img" alt="Card image cap">
+                    <div class="card-body">
+                        <h4 class="card-title">@item.JudulBuku</h4>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="javascript:void(0)" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+                <!-- Card -->
+            </div>
+        }
+    }
+    <!-- column -->
+    <!-- column -->
+    <!-- column -->
+    <div class="col-lg-3 col-md-6">
+        <!-- Card -->
+        <div class="card">
+            <img class="card-img-top img-responsive" src="../assets/images/big/img2.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h4 class="card-title">Card title</h4>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="javascript:void(0)" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+        <!-- Card -->
+    </div>
+    <!-- column -->
+    <!-- column -->
+    <div class="col-lg-3 col-md-6">
+        <!-- Card -->
+        <div class="card">
+            <img class="card-img-top img-responsive" src="../assets/images/big/img3.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h4 class="card-title">Card title</h4>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="javascript:void(0)" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+        <!-- Card -->
+    </div>
+    <!-- column -->
+    <!-- column -->
+    <div class="col-lg-3 col-md-6 img-responsive">
+        <!-- Card -->
+        <div class="card">
+            <img class="card-img-top img-responsive" src="../assets/images/big/img4.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h4 class="card-title">Card title</h4>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="javascript:void(0)" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+        <!-- Card -->
+    </div>
+    <!-- column -->
+</div>
+
+<table id="myTable"
+       class="display no-wrap table table-hover table-striped table-bordered compact"
+       cellspacing="0">
+    <thead class="bg-dark text-light" style="font-family:Calibri;font-size:small;">
+        <tr>
+            <th width="30">no</th>
+            <th style="text-align:center;">JudulBuku</th>
+            <th style="text-align:center;">Pengarang</th>
+            <th style="text-align:center;">JenisBuku</th>
+            <th style="text-align:center;">HargaSewaPerHari</th>
+            <th style="text-align:center;">Status</th>
+            <th style="text-align:center;">Delete</th>
+        </tr>
+    </thead>
+    <tbody style="font-size:small;font-family:Calibri;">
+        @{
+            int a = 0;
+            foreach (var item in Model.ListData)
+            {
+                a++;
+                <tr>
+                    <td nowrap align="center">@a</td>
+                    <td nowrap align="left">
+                        <a class="" style="text-align:left;"
+                           href="javascript:showInPopup('@Url.Action("BukuData_Form","Master",new { id=item.IdBook},Context.Request.Scheme)','Form Modif Buku Data')">
+                            <img src="../../@item.Img"
+                                 style="max-width:32px;"
+                                 onerror="this.onerror=null; this.src='../../images/error/defaultImg.png'" />
+                            @item.JudulBuku
+                        </a>
+                    </td>
+                    <td nowrap align="left">
+                        @item.Pengarang
+                    </td>
+                    <td nowrap align="left">@item.JenisBuku</td>
+                    <td nowrap align="right">@item.HargaSewaPerHari.toNumber()</td>
+                    <td nowrap align="center">
+                        @{
+                            @if (item.Status == 1)
+                            {
+                                <div class="badge badge-success">Aktif</div>
+                            }
+                            else
+                            {
+                                <div class="badge badge-danger">Non Aktif</div>
+                            }
+                        }
+                    </td>
+                    <td nowrap align="center" width="30">
+                        <form asp-action="BukuData_Delete" asp-route-Id="@item.IdBook" onsubmit="return MenuData_Delete(this);" class="d-inline">
+                            <button type="submit"
+                                    class="m-portlet__nav-link btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
+                                    title="View">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(function () {
+        var collapsedGroups = {};
+        var table = $('#myTable').DataTable({
+            "info": false,
+            "scrollX": true,
+            "autoWidth": false,
+            "paging": true,
+            scrollY: "50vh",
+            scrollX: !0,
+            scrollCollapse: !0,
+            iDisplayLength: 100,
+            searching: true,
+            order: [[3, 'asc']],
+            rowGroup: {
+                // Uses the 'row group' plugin
+                dataSrc: 3,
+                startRender: function (rows, group) {
+                    var collapsed = !!collapsedGroups[group];
+
+                    rows.nodes().each(function (r) {
+                        r.style.display = collapsed ? 'none' : '';
+                    });
+
+                    // Add category name to the <tr>. NOTE: Hardcoded colspan
+                    return $('<tr/>')
+                        .append('<td colspan="7">' + group + ' (' + rows.count() + ')</td>')
+                        .attr('data-name', group)
+                        .toggleClass('collapsed', collapsed);
+                }
+            }
+        });
+
+        $('#myTable tbody').on('click', 'tr.group-start', function () {
+            var name = $(this).data('name');
+            console.log(name);
+            collapsedGroups[name] = !collapsedGroups[name];
+            table.draw(false);
+        }); 
+    });
+
+    
+
+</script>

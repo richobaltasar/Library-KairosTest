@@ -1,0 +1,233 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model FormMaster
+@{
+    MasterFunction f = new MasterFunction();
+    try
+    {
+        switch (Model.Type)
+        {
+            case "textnumber":
+                <input type="text"
+                       id="@Model.Id"
+                       name="@Model.Id"
+                       value="@Model.ValueInput"
+                       style="text-align:right;"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
+                       @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
+                       class="form-control input-element">
+                <script type="text/javascript">
+                    var cleave = new Cleave('.input-element', {
+                        numeral: true,
+                        numeralThousandsGroupStyle: 'thousand'
+                    });
+                </script>
+                break;
+            case "formatIDCard":
+                <input type="text"
+                       id="@Model.Id"
+                       name="@Model.Id"
+                       value="@Model.ValueInput"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
+                       @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
+                       class="form-control input-element">
+                <script type="text/javascript">
+                    var cleave = new Cleave('.input-element', {
+                        blocks: [4, 4, 4, 4, 4],
+                        uppercase: true
+                    });
+                </script>
+                break;
+            case "phonenumber":
+                <input type="text"
+                       id="@Model.Id"
+                       name="@Model.Id"
+                       value="@Model.ValueInput"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
+                       @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
+                       class="form-control input-phone">
+                <script type="text/javascript">
+                    var cleavePhone = new Cleave('.input-phone', {
+                        phone: true,
+                        phoneRegionCode: 'ID'
+                    });
+                </script>
+                break;
+            case "selectpicker":
+                <select class="selectpicker"
+                        id="@Model.Id"
+                        name="@Model.Id"
+                        data-live-search="true"
+                        @{ if (Model.Mandatory == "1") { @Html.Raw("required")  ; } }
+                        @{ if (Model.Enable == "disable") { <text> disabled </text>  }}>
+                    @{
+                        dynamic tt = null;
+                        tt = f.GetListDataMaster(Model.ListModel);
+                        @foreach (var dd in tt)
+                        {
+                            if (dd.Value == Model.ValueInput)
+                            {
+                                <option value="@dd.Value" selected="selected" data-tokens="@dd.Value">@dd.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@dd.Value" data-tokens="@dd.Value">@dd.Text</option>
+                            }
+                        }
+                    }
+                </select>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $('.selectpicker').selectpicker();
+                    });
+                </script>
+                break;
+            case "datepicker":
+                <input type="text"
+                       name="@Model.Id"
+                       id="@Model.Id"
+                       value="@Model.ValueInput"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw("required")  ; } }
+                       @{ if (Model.Enable == "disable") { @Html.Raw("readonly='readonly'")  }}
+                       class="form-control">
+                <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#@Model.Id').datepicker({
+                        format: 'dd/mm/yyyy',
+                        autoclose: true
+                    });
+                });
+                </script>
+                break;
+            case "textarea":
+                <textarea class="form-control"
+                          id="@Model.Id"
+                          name="@Model.Id"
+                          @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
+                          @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}>@Model.ValueInput</textarea>
+                break;
+            case "textbox_password":
+                <style type="text/css">
+                    .form-group-password {
+                        position: relative;
+                        width: 100%;
+                        overflow: hidden;
+                    }
+
+                        .form-group-password > .toggleMask {
+                            position: absolute;
+                            top: 3px;
+                            right: -30px;
+                            text-indent: -30px;
+                            height: 100%;
+                            line-height: 2;
+                            pointer-events: auto;
+                            z-index: 5;
+                            cursor: pointer;
+                        }
+
+                            .form-group-password > .toggleMask ~ input {
+                                padding-right: 30px;
+                            }
+
+                            .form-group-password > .toggleMask:checked > span {
+                            }
+                </style>
+                <div class='form-group-password'>
+                    <label class='toggleMask'>
+                        <input type='checkbox' hidden />
+                        <i class='fa fa-eye'></i>
+                    </label>
+                    <input type='password'
+                           id="@Model.Id"
+                           name="@Model.Id"
+                           value="@Model.ValueInput"
+                           @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
+                           @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
+                           class="form-control" />
+                </div>
+                <script type="text/javascript">
+                    var toggleInput = document.querySelector('.toggleMask > input');
+                    toggleInput.addEventListener('change', onToggleMaskChange);
+
+                    function onToggleMaskChange() {
+
+                        this.nextElementSibling.className = this.checked
+                            ? this.nextElementSibling.className.replace('fa-eye', 'fa-eye-slash')
+                            : this.nextElementSibling.className.replace('fa-eye-slash', 'fa-eye')
+
+                        this.parentNode.nextElementSibling.type = this.checked ? 'text' : 'password'
+                    }
+                </script>
+                break;
+            case "textbox":
+                <input type="text"
+                       id="@Model.Id"
+                       name="@Model.Id"
+                       value="@Model.ValueInput"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
+                       @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
+                       class="form-control">
+                break;
+            case "select":
+                <select id="@Model.Id"
+                        name="@Model.Id"
+                        @{ if (Model.Mandatory == "1") { @Html.Raw("required")  ; } }
+                        @{ if (Model.Enable == "disable") { <text> disabled </text>  }}
+                        class="form-control custom-select">
+                    @{
+                        dynamic t = null;
+                        t = f.GetListDataMaster(Model.ListModel);
+                        @foreach (var dd in t)
+                        {
+                            if (dd.Value == Model.ValueInput)
+                            {
+                                <option value="@dd.Value" selected="selected">@dd.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@dd.Value">@dd.Text</option>
+                            }
+                        }
+                    }
+                </select>
+                break;
+            case "FileInput":
+
+                <input type="file"
+                       id="File_@Model.Id"
+                       name="File_@Model.Id"
+                       @{ if (Model.Enable == "disable") { @Html.Raw("readonly='readonly'")  }}
+                       class="dropify"
+                       accept="@Model.ListModel"
+                       data-height="100"
+                       @{ if (Model.ValueInput != null) { @Html.Raw(" data-default-file='../../" + Model.ValueInput + "' ")  } else { @Html.Raw("data-default-file='../../ImageDefault/IdentityCard.png'")  } } />
+                <input type="text"
+                       hidden="hidden"
+                       id="@Model.Id"
+                       name="@Model.Id"
+                       value="@Model.ValueInput"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw("required")  ; } } />
+                <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#File_@Model.Id').attr("data-default-file", "../../@Model.ValueInput");
+                    $('.dropify').dropify({
+                        messages: {
+                            'default': 'Drag and drop a file here or click',
+                            'replace': 'Drag and drop or click to replace',
+                            'remove': 'Remove',
+                            'error': 'Ooops, something wrong happended.'
+                        }
+                    });
+                });
+                </script>
+                break;
+        }
+    }
+    catch (Exception ex)
+    {
+        <p>error @ex.Message</p>
+    }
+
+}

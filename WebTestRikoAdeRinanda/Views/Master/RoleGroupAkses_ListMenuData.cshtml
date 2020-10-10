@@ -1,0 +1,125 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "";
+    MasterFunction f = new MasterFunction();
+    var formData = new FormMasterData();
+}
+@model RoleGroupAkses_ListMenu_Model
+@{
+    if (Model.Error == null)
+    {
+
+        try
+        {
+    
+        <table id="myTable3"
+               class="display no-wrap table table-hover table-striped table-bordered compact"
+               cellspacing="0">
+            <thead class="bg-dark text-light" style="font-family:Calibri;font-size:small;">
+                <tr>
+                    <th width="30">ID</th>
+                    <th style="text-align:center;">NamaMenu</th>
+                </tr>
+            </thead>
+            <tbody style="font-size:small;font-family:Calibri;">
+                @{
+                    int a = 0;
+                    foreach (var item in Model.ListMenu)
+                    {
+                        a++;
+                        <tr>
+                            <td nowrap align="center">@item.idMenu</td>
+                            <td nowrap align="left">
+                                @item.NamaMenu
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @*<button class="btn btn-success" style="float:right;">Add</button>*@
+<button id="button" class="btn btn-outline-info" style="float:right;">Add</button>
+        
+        <script type="text/javascript">
+            var table;
+            $(function () {
+                var collapsedGroups = {};
+                table = $('#myTable3').DataTable({
+                    "info": false,
+                    "scrollX": true,
+                    "autoWidth": false,
+                    "paging": true,
+                    scrollY: "50vh",
+                    scrollX: !0,
+                    scrollCollapse: !0,
+                    iDisplayLength: 100,
+                    searching: true
+                });
+
+                $('#myTable3 tbody').on('click', 'tr', function () {
+                    $(this).toggleClass('selected');
+                });
+
+                $('#button').click(function () {
+                    var array = [];
+                    table.rows('.selected').every(function (rowIdx) {
+                        array.push(table.row(rowIdx).data());
+                    });
+                    console.log(array);
+                    var formData = new FormData();
+                    $.each(array, function (idx, obj) {
+                        $.each(obj, function (key, value) {
+                            if (key == 0) {
+                                formData.append('[' + idx + '].IdMenu', value);
+                                formData.append('[' + idx + '].IdRole', @Model.Data.IdRole);
+                            }
+                        });
+                    });
+
+                    SaveList(formData);
+                });
+            });
+
+            function SaveList(Data) {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RoleGroupAkses_AddListMenu", "Master")',
+                    data: Data,
+                    contentType: false,
+                    processData: false,
+                    success: function (res) {
+                        console.log(res);
+                        if (res.isValid) {
+                            $('#form-modal2').modal('hide');
+                            $('#view-all-2').html(res.html)
+                            $.notify("Data berhasil dihapus", { globalPosition: 'top center', className: 'success' });
+                        }
+                        else {
+                            $.notify('Sorry ' + res.message, { globalPosition: 'top center', className: 'warning' })
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var err = eval("(" + xhr.responseText + ")");
+                        console.log(err);
+                    }
+                });
+            }
+        </script>
+        }
+        catch (Exception ex)
+        {
+        var Error = new ErrorViewModel();
+        Error.MessageContent = ex.ToString();
+        Error.MessageTitle = "Error ";
+        Error.RequestId = Activity.Current?.Id ?? "0";
+        @await Html.PartialAsync("Error", Error)
+        }
+        }
+        else
+        {
+        @await Html.PartialAsync("Error", Model.Error)
+        }
+        }
+
