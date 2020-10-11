@@ -233,6 +233,8 @@
     <Build Include="dbo\Stored Procedures\CariBuku\SP_CariBuku_GetSearch.sql" />
     <Build Include="dbo\Stored Procedures\General\sp_FindStringInTable_with_flag.sql" />
     <Build Include="dbo\Stored Procedures\CariBuku\SP_FormPeminjaman_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\General\SP_GetDateTime.sql" />
+    <Build Include="dbo\Stored Procedures\General\SP_GetDiffDays.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

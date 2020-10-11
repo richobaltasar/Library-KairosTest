@@ -12,7 +12,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using System.ServiceModel;
+using ServiceCalculator;
 
 namespace WebTestRikoAdeRinanda.Controllers
 {
@@ -20,6 +21,8 @@ namespace WebTestRikoAdeRinanda.Controllers
     {
         GlobalFunction GF = new GlobalFunction();
         MasterFunction f = new MasterFunction();
+        
+        
 
         private readonly IConfiguration _configuration;
         private IWebHostEnvironment _env;
@@ -64,24 +67,20 @@ namespace WebTestRikoAdeRinanda.Controllers
         [NoDirectAccess]
         public async Task<IActionResult> CariBuku_Form_Sewa(int id = 0)
         {
+
             var model = new FormPeminjamanBuku();
             try
             {
-                if (id == 0)
+                CalculatorSoapClient authorServiceClient = new CalculatorSoapClient(CalculatorSoapClient.EndpointConfiguration.CalculatorSoap);
+                model = await f.FormPeminjaman_GetById(id);
+                model.SewaDari = GF.GetDatetime().Left(10);
+                model.Sewasampai = GF.GetDatetime().Left(10);
+                model.TotalSewa = "0";
+                if (model == null)
                 {
-                    model.IdBook = id;
-                    return await Task.Run(() => View(model));
+                    return NotFound();
                 }
-                else
-                {
-                    model = await f.FormPeminjaman_GetById(id);
-
-                    if (model == null)
-                    {
-                        return NotFound();
-                    }
-                    return await Task.Run(() => View(model));
-                }
+                return await Task.Run(() => View(model));
             }
             catch (Exception ex)
             {
@@ -94,6 +93,7 @@ namespace WebTestRikoAdeRinanda.Controllers
             }
 
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -140,6 +140,41 @@ namespace WebTestRikoAdeRinanda.Controllers
                 }));
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CariBuku_GetTotalSewa(string Dari, string Sampai,string Harga)
+        {
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    int dayTotals = GF.GetDiffDays(Dari, Sampai);
+                    CalculatorSoapClient authorServiceClient = new CalculatorSoapClient(CalculatorSoapClient.EndpointConfiguration.CalculatorSoap);
+                    int d = await authorServiceClient.MultiplyAsync(dayTotals, Harga.ToInt());
+                    string sewa = d.ToString().toNumber();
+                    return await Task.Run(() => Json(new { isValid = true, totalSewa = sewa }));
+                }
+                catch (Exception ex)
+                {
+                    r.MessageContent = ex.ToString();
+                    r.MessageTitle = "Error ";
+                    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+                }
+            }
+            else
+            {
+                r.MessageContent = "State Model tidak valid";
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+            }
+        }
+        #endregion
+
+        #region TransaksiPeminjaman
+
         #endregion
     }
 }

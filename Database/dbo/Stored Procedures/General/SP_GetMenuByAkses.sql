@@ -15,6 +15,7 @@ begin
 			where b.IdMenu in (select a.IdMenu from GroupData_MenuAkses a where IdRole in (select RoleId from UserData where id = @IdUser))
 		)
 	)
+	and Status =1
 end
 else if(@Posisi =2)
 begin
@@ -28,5 +29,6 @@ begin
 			where b.IdMenu in (select a.IdMenu from GroupData_MenuAkses a where IdRole in (select RoleId from UserData where id = @IdUser))
 		)
 	)
+	and Status =1
 end
 

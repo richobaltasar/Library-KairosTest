@@ -16,7 +16,6 @@ namespace WebTestRikoAdeRinanda.Function
     {
         GlobalFunction GF = new GlobalFunction();
         MasterFunction M = new MasterFunction();
-        StringCipher Crypt = new StringCipher();
 
         public SqlConnection conn = new SqlConnection();
         public SqlCommand cmd = new SqlCommand();

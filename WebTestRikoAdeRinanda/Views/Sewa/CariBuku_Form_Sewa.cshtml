@@ -20,9 +20,17 @@
         @{
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-6">            
-                        <img src="~/@Model.Img" style="width:100%;border-radius:10px 10px;" class="shadow" />
-                    </div>
+                            <div class="col-sm-6">
+                                <div class="card-body slides" style="height:450px;">
+                                    <img src="~/@Model.Img" style="width:100%;border-radius:10px 10px;max-height:300px;" class="shadow" />
+                                    <h4 style="margin-bottom:0px;margin-top:20px;">@Model.JudulBuku</h4>
+                                    <p style="font-style:italic;margin:0px 0px 0px 0px;color:dimgray;font-size:small;">Author by @Model.Pengarang</p>
+                                    <br />
+                                    <strong>Kategory buku @Model.JenisBuku </strong>
+                                    <br />
+                                    <strong>Sewa Rp @Model.HargaSewaPerHari.toNumber()/Hari </strong>
+                                </div>
+                            </div>
                     <div class="col-sm-6">
                         @{
                             formData.Template = f.GetFormLayout("Form FormPeminjamanBuku");
@@ -33,6 +41,7 @@
                             }
                             @await Html.PartialAsync("_LayoutForm", formData)
                         }
+                        
                     </div>
                 </div>
             </div>
@@ -45,26 +54,57 @@
             </div>
             <hr />
 
-            if (Model.IdBook == 0)
-            {
-                <button type="submit" class="btn btn-outline-info" style="float:right;">
-                    <span class="fa fa-save"></span> Create
-                </button>
-            }
-            else
-            {
-                <button type="submit" class="btn btn-outline-info" style="float:right;margin-left:10px;">
-                    <span class="fa fa-save"></span> Simpan
-                </button>
-            }
+            <button type="submit" class="btn btn-outline-info" style="float:right;margin-left:10px;">
+                <span class="fa fa-save"></span> Add List
+            </button>
         }
     </form>
     <script type="text/javascript">
+        var dari = $("#SewaDari");
+        var sampai = $("#Sewasampai");
+        
+
         $(document).ready(function () {
             $("#error-alert").hide();
-        });
 
-        
+            var dateToday = new Date(); 
+            $('#Sewasampai').datepicker('setStartDate', new Date());
+
+            $("#SewaDari").on('changeDate', function (selected) {
+                var startDate = new Date(selected.date.valueOf());
+                $("#Sewasampai").datepicker('setStartDate', startDate);
+                if ($("#SewaDari").val() > $("#Sewasampai").val()) {
+                    $("#Sewasampai").val($("#SewaDari").val());
+                }
+                SetTotaSewa(dari.val(), sampai.val(),@Model.HargaSewaPerHari.toDecimal())
+            });
+            $("#Sewasampai").on('changeDate', function (selected) {
+                SetTotaSewa(dari.val(), sampai.val(),@Model.HargaSewaPerHari.toDecimal())
+            });
+        });
+        function SetTotaSewa(dari, sampai, harga) {
+            $(".preloader").fadeIn();
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("CariBuku_GetTotalSewa", "Sewa")' + '?Dari=' + dari + '&Sampai=' + sampai + '&Harga=' + harga,
+                success: function (res) {
+                    console.log(res);
+                    if (res.isValid) {
+                        $("#TotalSewa").val(res.totalSewa);
+                    }
+                    else {
+                        $.notify('Sorry ' + re.message, { globalPosition: 'top center', className: 'warning' })
+                    }
+                    $(".preloader").fadeOut();
+                },
+                error: function (request, status, error) {
+                    console.log(error.responseText);
+                    $.notify('Sorry ' + error.responseText, { globalPosition: 'top center', className: 'warning' })
+                    $(".preloader").fadeOut();
+                }
+            });
+        }
+
     </script>
         }
         catch (Exception ex)
