@@ -1,0 +1,199 @@
+﻿
+@model TransaksiTransaksiPeminjamanBukuModel
+@{
+    GlobalFunction f = new GlobalFunction();
+}
+
+@if (Model.Error != null)
+{
+    @await Html.PartialAsync("Error", Model.Error)
+
+}
+
+<table id="myTable"
+       class="display no-wrap table table-hover table-striped table-bordered compact"
+       cellspacing="0">
+    <thead class="bg-dark text-light" style="font-family:Calibri;font-size:small;">
+        <tr>
+            <th width="30">no</th>
+            <th style="text-align:center;">Judul Buku</th>
+            <th style="text-align:center;">Tanggal</th>
+            <th style="text-align:center;">Harga per Hari</th>
+            <th style="text-align:center;">Jumlah Hari</th>
+            <th style="text-align:center;">Total Sewa</th>
+            <th style="text-align:center;">Nama Penyewa</th>
+            <th style="text-align:center;">Status</th>
+            @if (Model.StatusTrx == 0)
+            {
+                <th style="text-align:center;">Action</th>
+            }
+
+        </tr>
+    </thead>
+    <tbody style="font-size:small;font-family:Calibri;">
+        @{
+            int a = 0;
+            decimal GrandTotal = 0;
+            string StatusTrx = "";
+            foreach (var item in Model.ListData)
+            {
+                a++;
+                <tr>
+                    <td nowrap align="center">@a</td>
+                    <td nowrap align="left">
+                        <img src="~/@item.Img"
+                             class="rounded"
+                             style="max-width:32px;"
+                             onerror="this.onerror=null; this.src='../../images/error/defaultImg.png'" />
+                        @item.JudulBuku
+                    </td>
+                    <td nowrap align="left">@item.SewaDari - @item.Sewasampai</td>
+                    <td nowrap align="right">@item.HargaSewaPerHari.toNumber()</td>
+                    <td nowrap align="center">
+                        @{
+                            string d = f.GetDiffDays(item.SewaDari, item.Sewasampai).ToString();
+                            <text>@d</text>
+                        }
+                    </td>
+                    <td nowrap align="right">@item.TotalSewa.toNumber()</td>
+                    <td nowrap align="left">@item.Nama_Penyewa</td>
+                    <td nowrap align="left">
+                        @{
+
+                            @if (item.Status == 0)
+                            {
+                                <div class="badge badge-success">Menunggu Checkout</div>
+                            }
+                            else if (item.Status == 1)
+                            {
+                                <div class="badge badge-info">Menunggu Konfirmasi</div>
+                            }
+                            else if (item.Status == 2)
+                            {
+                                <div class="badge badge-primary">Dalam Peminjaman</div>
+                            }
+                            else if (item.Status == 3)
+                            {
+                                <div class="badge badge-danger">Telah Selesai</div>
+                            }
+                        }
+                    </td>
+                    @if (Model.StatusTrx == 0)
+                    {
+                <td nowrap align="center" width="30">
+                    <form asp-action="TransaksiPeminjaman_Delete" asp-route-Id="@item.Id" onsubmit="return TransaksiPeminjaman_Delete(this);" class="d-inline">
+                        <button type="submit"
+                                class="m-portlet__nav-link btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
+                                title="View">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                    <button 
+                            title="Edit"
+                            class="m-portlet__nav-link btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill" 
+                            onclick="showInPopup('@Url.Action("TransaksiPeminjaman_Form","Sewa",new { id=item.Id},Context.Request.Scheme)','Form Peminjaman')">
+                        <i class="fa fa-edit text-info"></i>
+                    </button>
+                </td>
+                    }
+                    </tr>
+
+                                GrandTotal = GrandTotal + item.TotalSewa.toDecimal();
+                            }
+        }
+    </tbody>
+    <tfoot style="font-size:small;font-family:Calibri;">
+        <tr>
+            @if (Model.StatusTrx == 0)
+            {
+                <td align="center" colspan="5">Grand Total</td>
+            }
+            else
+            {
+                <td align="center" colspan="4">Grand Total</td>
+            }
+            <td align="right">@GrandTotal.ToString().toNumber()</td>
+            <td align="center" colspan="3"></td>
+        </tr>
+    </tfoot>
+</table>
+@{
+    if (Model.StatusTrx == 0)
+    {
+        <form asp-action="TransaksiPeminjaman_Checkout" asp-route-Id="@ViewBag.UserId" onsubmit="return TransaksiPeminjaman_Checkout(this);" class="d-inline">
+            <button type="submit"
+                    class="btn btn-danger m-l-15 m-t-15"
+                    style="float:right"
+                    title="View">
+                <i class="fa fa-check"></i> Checkout
+            </button>
+        </form>
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        var collapsedGroups = {};
+        var table = $('#myTable').DataTable({
+            "info": false,
+            "scrollX": false,
+            "autoWidth": false,
+            "paging": false,
+            scrollY: "50vh",
+            scrollX: !0,
+            scrollCollapse: !0,
+            iDisplayLength: 100,
+            searching: false
+        });
+    });
+
+    TransaksiPeminjaman_Checkout = form => {
+        Swal.fire({
+            title: 'Apakah anda yakin melakukan Checkout ?',
+            text: 'Total Transaksi sebesar Rp @GrandTotal.ToString().toNumber()',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, pay it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(".preloader").fadeIn();
+                try {
+                    $.ajax({
+                        type: 'POST',
+                        url: form.action,
+                        data: new FormData(form),
+                        contentType: false,
+                        processData: false,
+                        success: function (res) {
+                            console.log(res);
+                            if (res.isValid) {
+                                $(".preloader").fadeOut();
+                                Swal.fire(
+                                    'Checkout ' + res.title + '!',
+                                    '' + res.message + ' Rp ' + res.total,
+                                    'success'
+                                )
+                                $('#TransaksiPeminjaman_Search').submit();
+                            }
+                            else {
+                                $(".preloader").fadeOut();
+                                $.notify('Sorry ' + res.message, { globalPosition: 'top center', className: 'warning' })
+                            }
+                        },
+                        error: function (err) {
+                            $.notify('Sorry ' + err.responseText, { globalPosition: 'top center', className: 'warning' });
+                        }
+                    })
+                } catch (ex) {
+                    $.notify('Sorry ' + ex.message, { globalPosition: 'top center', className: 'warning' });
+                }
+            }
+        });
+        $(".preloader").fadeOut();
+        //prevent default form submit event
+        return false;
+    }
+
+</script>

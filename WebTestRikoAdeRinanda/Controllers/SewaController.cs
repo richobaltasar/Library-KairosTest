@@ -21,7 +21,7 @@ namespace WebTestRikoAdeRinanda.Controllers
     {
         GlobalFunction GF = new GlobalFunction();
         MasterFunction f = new MasterFunction();
-        
+        SewaFunction s = new SewaFunction();
         
 
         private readonly IConfiguration _configuration;
@@ -93,7 +93,6 @@ namespace WebTestRikoAdeRinanda.Controllers
             }
 
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -171,10 +170,424 @@ namespace WebTestRikoAdeRinanda.Controllers
                 return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CariBuku_AddCart([Bind("Id,IdBook,SewaDari,Sewasampai,TotalSewa,Status,HargaSewaPerHari")] FormPeminjamanBuku data)
+        {
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                    {
+                        var model2 = new alertLogin();
+                        return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                    }
+                    else
+                    {
+                        data.IdUser_Penyewa = HttpContext.Session.GetString("_UserId");
+                        r = await f.CariBuku_AddCart(data);
+                        if (r.MessageStatus == "success")
+                        {
+                            return await Task.Run(() => Json(new { isValid = true, message = r.MessageContent, title = r.MessageTitle }));
+                        }
+                        else
+                        {
+                            return await Task.Run(() => Json(new
+                            {
+                                isValid = false,
+                                message = r.MessageContent,
+                                title = r.MessageTitle
+                            }));
+                        }
+                    }
+                   
+                }
+                catch (Exception ex)
+                {
+                    r.MessageContent = ex.ToString();
+                    r.MessageTitle = "Error ";
+                    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    return await Task.Run(() => Json(new
+                    {
+                        isValid = false,
+                        message = r.MessageContent,
+                        title = r.MessageTitle
+                    }));
+                }
+            }
+            else
+            {
+                r.MessageContent = "State Model tidak valid";
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                //model.ListData = await f.BukuData_Get();
+                return await Task.Run(() => Json(new
+                {
+                    isValid = false,
+                    message = r.MessageContent,
+                    title = r.MessageTitle
+                }));
+            }
+        }
         #endregion
 
         #region TransaksiPeminjaman
 
+        public async Task<IActionResult> TransaksiPeminjaman()
+        {
+            Config.ConStr = _configuration.GetConnectionString("Db");
+            var model = new TransaksiTransaksiPeminjamanBukuModel();
+            try
+            {
+
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var model2 = new alertLogin();
+                    return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                }
+                else
+                {
+                    ViewBag.UserId = HttpContext.Session.GetString("_UserId");
+
+                    var Filter = new TransaksiTransaksiPeminjamanBuku();
+                    Filter.IdUser_Penyewa = HttpContext.Session.GetString("_UserId").ToInt();
+                    model.ListData = await s.TransaksiPeminjaman_GetSearch(Filter);
+                    return await Task.Run(() => View(model));
+                }
+            }
+            catch (Exception ex)
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = ex.ToString();
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = Error;
+                return await Task.Run(() => View(model));
+            }
+        }
+
+        [NoDirectAccess]
+        public async Task<IActionResult> TransaksiPeminjaman_Form(int id = 0)
+        {
+            var model = new TransaksiTransaksiPeminjamanBuku();
+            try
+            {
+                if (id == 0)
+                {
+                    model.Id = id;
+                    return await Task.Run(() => View(model));
+                }
+                else
+                {
+                    model = await s.TransaksiPeminjaman_GetById(id);
+                    if (model == null)
+                    {
+                        return NotFound();
+                    }
+                    return await Task.Run(() => View(model));
+                }
+            }
+            catch (Exception ex)
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = ex.ToString();
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = Error;
+                return await Task.Run(() => View(model));
+            }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TransaksiPeminjaman_Save([Bind("Id,IdBuku,SewaDari,Sewasampai,TotalSewa,Status,IdUser_Penyewa")] TransaksiTransaksiPeminjamanBuku data)
+        {
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    r = await s.TransaksiPeminjaman_Save(data);
+                    if (r.MessageStatus == "success")
+                    {
+                        data.Id = r.RequestId.ToInt();
+                        return await Task.Run(() => Json(new { isValid = true }));
+                    }
+                    else
+                    {
+                        var Error = new ErrorViewModel();
+                        Error.MessageContent = r.MessageContent;
+                        Error.MessageTitle = r.MessageTitle;
+                        Error.RequestId = r.RequestId;
+                        data.Error = Error;
+                        return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle, html = Helper.RenderRazorViewToString(this, "MenuData_Form", data) }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var Error = new ErrorViewModel();
+                    Error.MessageContent = ex.ToString();
+                    Error.MessageTitle = "Error ";
+                    Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    return await Task.Run(() => Json(new { isValid = false, message = Error.MessageContent, title = Error.MessageTitle, html = Helper.RenderRazorViewToString(this, "MenuData_Form", data) }));
+                }
+            }
+            else
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = "State Model tidak valid";
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = Error.MessageContent, title = Error.MessageTitle, html = Helper.RenderRazorViewToString(this, "MenuData_Form", data) }));
+            }
+        }
+
+        [HttpPost, ActionName("TransaksiPeminjaman_Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TransaksiPeminjaman_Delete(int Id)
+        {
+            var r = new ErrorViewModel();
+            try
+            {
+                r = await s.TransaksiPeminjaman_Del(Id);
+                if (r.MessageStatus == "success")
+                {
+                    return await Task.Run(() => Json(new { isValid = true, message = r.MessageContent, title = r.MessageTitle }));
+                }
+                else
+                {
+                    var Error = new ErrorViewModel();
+                    return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                r.MessageContent = ex.ToString();
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+            }
+
+        }
+
+        //search buku di transaksi peminjaman
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TransaksiPeminjaman_Search([Bind("JudulBuku,Pengarang,JenisBuku,IdUser_Penyewa,Status")] TransaksiTransaksiPeminjamanBuku data)
+        {
+            var model = new TransaksiTransaksiPeminjamanBukuModel();
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                    {
+                        var model2 = new alertLogin();
+                        return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                    }
+                    else
+                    {
+                        data.IdUser_Penyewa = HttpContext.Session.GetString("_UserId").ToInt();
+                        model.ListData = await s.TransaksiPeminjaman_GetSearch(data);
+                        model.StatusTrx = data.Status;
+                        return await Task.Run(() => Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "TransaksiPeminjaman_Table", model) }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    r.MessageContent = ex.ToString();
+                    r.MessageTitle = "Error ";
+                    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    model.Error = r;
+                    model.ListData = await s.TransaksiPeminjaman_Get();
+                    return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle, html = Helper.RenderRazorViewToString(this, "TransaksiPeminjaman_Table", data) }));
+                }
+            }
+            else
+            {
+                r.MessageContent = "State Model tidak valid";
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = r;
+                model.ListData = await s.TransaksiPeminjaman_Get();
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle, html = Helper.RenderRazorViewToString(this, "MenuData_Table", model) }));
+            }
+        }
+
+        [HttpPost, ActionName("TransaksiPeminjaman_Checkout")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TransaksiPeminjaman_Checkout(int Id)
+        {
+            var r = new ErrorViewModel();
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var model2 = new alertLogin();
+                    return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                }
+                else
+                {
+                    r = await s.TransaksiPeminjaman_Checkout(HttpContext.Session.GetString("_UserId").ToInt());
+                    if (r.MessageStatus == "success")
+                    {
+                        return await Task.Run(() => Json(new { isValid = true, message = r.MessageContent, title = r.MessageTitle, total = r.RequestId.toNumber() }));
+                    }
+                    else
+                    {
+                        var Error = new ErrorViewModel();
+                        return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                r.MessageContent = ex.ToString();
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+            }
+
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> CariBuku_GetDetailBook(int Id)
+        {
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var bookdetail = await f.BukuData_GetById(Id);
+                    return await Task.Run(() => Json(new { isValid = true, 
+                        judulBuku = bookdetail.JudulBuku, 
+                        pengarang= bookdetail.Pengarang,
+                        jenisBuku = bookdetail.JenisBuku,
+                        hargaSewaPerHari =bookdetail.HargaSewaPerHari.toNumber(),
+                        img = bookdetail.Img
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    r.MessageContent = ex.ToString();
+                    r.MessageTitle = "Error ";
+                    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+                }
+            }
+            else
+            {
+                r.MessageContent = "State Model tidak valid";
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CariBuku_UpdateCart([Bind("Id,IdBuku,SewaDari,Sewasampai,TotalSewa")] TransaksiTransaksiPeminjamanBuku data)
+        {
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                    {
+                        var model2 = new alertLogin();
+                        return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                    }
+                    else
+                    {
+                        data.IdUser_Penyewa = HttpContext.Session.GetString("_UserId").ToInt();
+                        r = await s.CariBuku_UpdateCart(data);
+                        if (r.MessageStatus == "success")
+                        {
+                            return await Task.Run(() => Json(new { isValid = true, message = r.MessageContent, title = r.MessageTitle }));
+                        }
+                        else
+                        {
+                            return await Task.Run(() => Json(new
+                            {
+                                isValid = false,
+                                message = r.MessageContent,
+                                title = r.MessageTitle
+                            }));
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    r.MessageContent = ex.ToString();
+                    r.MessageTitle = "Error ";
+                    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    return await Task.Run(() => Json(new
+                    {
+                        isValid = false,
+                        message = r.MessageContent,
+                        title = r.MessageTitle
+                    }));
+                }
+            }
+            else
+            {
+                r.MessageContent = "State Model tidak valid";
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                //model.ListData = await f.BukuData_Get();
+                return await Task.Run(() => Json(new
+                {
+                    isValid = false,
+                    message = r.MessageContent,
+                    title = r.MessageTitle
+                }));
+            }
+        }
+        #endregion
+
+        #region KonfirmasiTransaksi
+        public async Task<IActionResult> KonfirmasiTransaksi()
+        {
+            Config.ConStr = _configuration.GetConnectionString("Db");
+            var model = new TransaksiTransaksiPeminjamanBukuModel();
+            try
+            {
+
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var model2 = new alertLogin();
+                    return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                }
+                else
+                {
+                    ViewBag.UserId = HttpContext.Session.GetString("_UserId");
+
+                    var Filter = new TransaksiTransaksiPeminjamanBuku();
+                    Filter.IdUser_Penyewa = HttpContext.Session.GetString("_UserId").ToInt();
+                    model.ListData = await s.TransaksiPeminjaman_GetSearch(Filter);
+                    return await Task.Run(() => View(model));
+                }
+            }
+            catch (Exception ex)
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = ex.ToString();
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = Error;
+                return await Task.Run(() => View(model));
+            }
+        }
         #endregion
     }
 }

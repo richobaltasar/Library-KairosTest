@@ -2365,7 +2365,47 @@ namespace WebTestRikoAdeRinanda.Function
             }
             return res;
         }
+        public async Task<ErrorViewModel> CariBuku_AddCart(FormPeminjamanBuku Data)
+        {
+            var res = new ErrorViewModel();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_CariBuku_AddCart " +
+                        "@IdBook=" + Data.IdBook + "," +
+                        "@IdUser_Penyewa=" + Data.IdUser_Penyewa + "," +
+                        "@HargaSewaPerHari=" + Data.HargaSewaPerHari.toDecimal() + "," +
+                        "@SewaDari='" + Data.SewaDari + "'," +
+                        "@Sewasampai='" + Data.Sewasampai + "'," +
+                        "@TotalSewa=" + Data.TotalSewa.toDecimal() + "" +
+                        "";
 
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                res.MessageTitle = reader["Title"].ToString();
+                                res.MessageContent = reader["Message"].ToString();
+                                res.MessageStatus = reader["Status"].ToString();
+                                res.RequestId = reader["Id"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        
         public async Task<FormPeminjamanBuku> FormPeminjaman_GetById(int Id)
         {
             var res = new FormPeminjamanBuku();

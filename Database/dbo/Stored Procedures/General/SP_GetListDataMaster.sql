@@ -99,6 +99,18 @@ BEGIN
 			) q
 			order by q.Text
 		end
-		
+		else if(@Data='ListJudulBuku')
+		begin
+			select*from 
+			(
+				select '' Text, 0 Value
+				union all
+				select
+				JudulBuku Text, IdBook Value
+				from DataBuku
+				where Status =1
+			) q
+			order by q.Text
+		end
 	end
 END

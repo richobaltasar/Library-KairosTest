@@ -1,0 +1,218 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "";
+    MasterFunction f = new MasterFunction();
+    var formData = new FormMasterData();
+}
+@model TransaksiTransaksiPeminjamanBuku
+@{
+    if (Model.Error == null)
+    {
+
+        try
+        {
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card-body slides" style="height:450px;" id="DetailBook">
+                            <img src="~/@Model.Img" style="width:100%;border-radius:10px 10px;max-height:300px;" class="shadow" id="ImgDetail"/>
+                            <h4 style="margin-bottom:0px;margin-top:20px;" id="JudulBukuDetail">@Model.JudulBuku</h4>
+                            <p style="font-style:italic;margin:0px 0px 10px 0px;color:dimgray;font-size:small;">
+                                Author by <strong id="PengarangDetail">@Model.Pengarang</strong></p>
+                            
+                            <strong style="">Kategory buku <span id="JenisBukuDetail">@Model.JenisBuku</span>  </strong>
+                            <br />
+                            <strong>Sewa Rp <span id="HargaSewaPerHariDetail">@Model.HargaSewaPerHari.toNumber()</span>/Hari </strong>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <form asp-action="CariBuku_UpdateCart"
+                              onsubmit="return CariBuku_UpdateCart(this)"
+                              autocomplete="off">
+                            @{
+                                formData.Template = f.GetFormLayout("Form Transaksi Peminjaman");
+                                formData.ColField = 1;
+                                if (Model != null)
+                                {
+                                    formData.dbContext = Model;
+                                }
+                                @await Html.PartialAsync("_LayoutForm", formData)
+                            }
+                            <div class="alert alert-danger" id="error-alert">
+
+                                <strong id="title-error"></strong>
+                                <br />
+                                <div id="message_error" style="overflow-x:auto;"></div>
+                            </div>
+                            <hr />
+                            <button type="submit" class="btn btn-outline-info" style="float:right;margin-left:10px;">
+                                <span class="fa fa-save"></span> Simpan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <script type="text/javascript">
+                var dari = $("#SewaDari");
+                var sampai = $("#Sewasampai");
+                $(document).ready(function () {
+                    $("#error-alert").hide();
+
+                    $("#SewaDari").on('changeDate', function (selected) {
+                        var startDate = new Date(selected.date.valueOf());
+                        $("#Sewasampai").datepicker('setStartDate', startDate);
+                        if ($("#SewaDari").val() > $("#Sewasampai").val()) {
+                            $("#Sewasampai").val($("#SewaDari").val());
+                        }
+                        SetTotaSewa(dari.val(), sampai.val(), $("#HargaSewaPerHariDetail").text().replace(".",""));
+
+                    });
+                    $("#Sewasampai").on('changeDate', function (selected) {
+                        SetTotaSewa(dari.val(), sampai.val(), $("#HargaSewaPerHariDetail").text().replace(".", ""));
+                    });
+
+                    $('#IdBuku').on('change', function (e) {
+                        var optionSelected = $("option:selected", this);
+                        var valueSelected = this.value;
+
+                        $.ajax({
+                            type: 'GET',
+                            url: '@Url.Action("CariBuku_GetDetailBook","Sewa")?Id=' + valueSelected,
+                            success: function (res) {
+                                //$(".preloader").fadeOut();
+                                //console.log(res);
+                                $("#JudulBukuDetail").text(res.judulBuku);
+                                $("#PengarangDetail").text(res.pengarang);
+                                $("#JenisBukuDetail").text(res.jenisBuku);
+                                $("#HargaSewaPerHariDetail").text(res.hargaSewaPerHari);
+                                $("#ImgDetail").attr("src", "../../" + res.img);
+                                var currentDate = new Date();
+                                $("#SewaDari").datepicker("setDate", currentDate);
+                                $("#Sewasampai").datepicker("setDate", currentDate);
+                                $("#TotalSewa").val("");
+
+                            },
+                            error: function (request, status, error) {
+                                //$(".preloader").fadeOut();
+                            }
+                        });
+                        //$(".preloader").fadeOut();
+                    });
+                });
+
+                function SetTotaSewa(dari, sampai, harga) {
+                    $(".preloader").fadeIn();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("CariBuku_GetTotalSewa", "Sewa")' + '?Dari=' + dari + '&Sampai=' + sampai + '&Harga=' + harga,
+                        success: function (res) {
+                            $(".preloader").fadeOut();
+                            console.log(res);
+                            if (res.isValid) {
+                                $("#TotalSewa").val(res.totalSewa);
+                            }
+                            else {
+                                //$.notify('Sorry ' + res.message, { globalPosition: 'top center', className: 'warning' });
+                                Swal.fire(
+                                    'Upss, Sorry !',
+                                    'Tidak dapat terhubung ke Web Services Silahkan check Internet Anda ',
+                                    //+ res.message,
+                                    'warning'
+                                )
+                            }
+                        },
+                        error: function (request, status, error) {
+                            console.log(error.responseText);
+                            Swal.fire(
+                                'Upss, Sorry !',
+                                '' + error.responseText ,
+                                'warning'
+                            )
+                            $(".preloader").fadeOut();
+                        }
+                    });
+
+                }
+
+                CariBuku_UpdateCart = form => {
+                try {
+                    $(".preloader").fadeIn();
+                    var Data = new FormData(form);
+                    $.ajax({
+                        type: 'POST',
+                        url: form.action,
+                        data: Data,
+                        contentType: false,
+                        processData: false,
+                        success: function (res) {
+                            console.log(res);
+                            if (res.isValid) {
+                                $('#TransaksiPeminjaman_Search').submit();
+                                $('#form-modal .modal-body').html('');
+                                $('#form-modal .modal-title').html('');
+                                $('#form-modal').modal('hide');
+                                //Swal.fire(
+                                //    'Upss, Sorry !',
+                                //    'Tidak dapat terhubung ke Web Services Silahkan check Internet Anda ',
+                                //    //+ res.message,
+                                //    'warning'
+                                //)
+
+                                Swal.fire({
+                                    title: '<strong>' + res.title + '</strong>',
+                                    icon: 'info',
+                                    html:
+                                        '<p>' + res.message + '</p>'
+                                })
+                            }
+                            else {
+                                $("#title-error").text(res.title);
+                                $("#message_error").text(res.message);
+                                $("#error-alert").show();
+                                $("#error-alert").fadeTo(10000, 500).slideUp(500, function () {
+                                    $("#error-alert").slideUp(500);
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            var err = eval("(" + xhr.responseText + ")");
+                            $("#title-error").text("Sorry");
+                            $("#message_error").text("ERROR !! " + err.responseText);
+                            $("#error-alert").fadeTo(3000, 500).slideUp(500, function () {
+                                $("#error-alert").slideUp(500);
+                            });
+                        }
+                    })
+                    //to prevent default form submit event
+                    $(".preloader").fadeOut();
+                    return false;
+                } catch (ex) {
+                    console.log(ex)
+                    $(".preloader").fadeOut();
+                    $("#title-error").text("Sorry");
+                    $("#message_error").text("ERROR !! ");
+                    $("#error-alert").fadeTo(3000, 500).slideUp(500, function () {
+                        $("#error-alert").slideUp(500);
+                    });
+                }
+            }
+            </script>
+        }
+        catch (Exception ex)
+        {
+            var Error = new ErrorViewModel();
+            Error.MessageContent = ex.ToString();
+            Error.MessageTitle = "Error ";
+            Error.RequestId = Activity.Current?.Id ?? "0";
+            @await Html.PartialAsync("Error", Error)
+        }
+    }
+    else
+    {
+        @await Html.PartialAsync("Error", Model.Error)
+    }
+}
+

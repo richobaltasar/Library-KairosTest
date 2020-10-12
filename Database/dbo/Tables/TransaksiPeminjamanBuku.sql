@@ -4,7 +4,8 @@
     [IdBuku] BIGINT NULL, 
     [SewaDari] NVARCHAR(MAX) NULL, 
     [Sewasampai] NVARCHAR(MAX) NULL, 
-    [TotalSewa] NCHAR(10) NULL, 
+    [TotalSewa] FLOAT NULL, 
     [Status] BIGINT NULL, 
-    [IdUser_Penyewa] BIGINT NULL
+    [IdUser_Penyewa] BIGINT NULL, 
+    [IdTrx] BIGINT NULL
 )

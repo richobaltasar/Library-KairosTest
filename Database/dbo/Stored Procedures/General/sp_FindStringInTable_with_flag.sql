@@ -6,7 +6,7 @@ AS
    DECLARE @sqlCommand varchar(max) = 'SELECT ' 
 
    SELECT @sqlCommand = @sqlCommand + 'case when [' + COLUMN_NAME + '] LIKE ''' + @stringToFind + ''' then 1 else 0 end as ' + COLUMN_NAME + '_found, ' 
-   FROM INFORMATION_SCHEMA.COLUMNS 
+   FROM INFORMATION_SCHEMA.COLUMNS a
    WHERE TABLE_SCHEMA = @schema
    AND TABLE_NAME = @table 
    AND DATA_TYPE IN ('char','nchar','ntext','nvarchar','text','varchar')

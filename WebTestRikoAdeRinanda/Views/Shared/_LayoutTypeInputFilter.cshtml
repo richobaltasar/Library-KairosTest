@@ -8,6 +8,30 @@
     {
         switch (Model.Type)
         {
+            case "datepicker":
+                <input type="text"
+                       name="@Model.Id"
+                       id="@Model.Id"
+                       value="@Model.ValueInput"
+                       style="text-align:right;"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw("required")  ; } }
+                       @{ if (Model.Enable == "disable") { @Html.Raw("readonly='readonly'")  }}
+                       class="form-control">
+                <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#@Model.Id').datepicker({
+                        format: 'dd/mm/yyyy',
+                        autoclose: true
+                    });
+                    $("#@Model.Id").keypress(function (e) {
+                        return false;
+                    });
+                    $("#@Model.Id").keydown(function (e) {
+                        return false;
+                    });
+                });
+                </script>
+                break;
             case "textbox":
                 <input type="text"
                        id="@Model.Id"
@@ -52,8 +76,7 @@
                        hidden="hidden"
                        id="@Model.Id"
                        name="@Model.Id"
-                       value="@Model.ValueInput"
-                       />
+                       value="@Model.ValueInput" />
                 <script type="text/javascript">
                 $(document).ready(function () {
                     $('#File_@Model.Id').attr("data-default-file", "../../@Model.ValueInput");
