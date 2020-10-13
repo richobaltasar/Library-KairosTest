@@ -5,6 +5,36 @@ using System.Threading.Tasks;
 
 namespace WebTestRikoAdeRinanda.Models
 {
+
+    public class DetailHarianFilter
+    {
+        public string TglTrxFrom { get; set; }
+        public string TglTrxUntil { get; set; }
+    }
+    public class DetailHarian
+    {
+        public string TanggalTransaksi { get; set; }
+        public string JudulBuku { get; set; }
+        public string Pengarang { get; set; }
+        public string JenisBuku { get; set; }
+        public string HargaPerHari { get; set; }
+        public string JumlahHari { get; set; }
+        public string TotalSewa { get; set; }
+        public string NamaPenyewa { get; set; }
+        public string NamaKasir { get; set; }
+        public string KasirTerimaUang { get; set; }
+        public string UangKembalian { get; set; }
+        public string TanggalPengembalian { get; set; }
+        public ErrorViewModel Error { get; set; }
+    }
+
+    public class DetailHarianModel
+    {
+        public DetailHarianFilter FilterData { get; set; }
+        public List<DetailHarian> Listdata { get; set; }
+        public ErrorViewModel Error { get; set; }
+    }
+
     public class TransaksiTransaksiPeminjamanBuku
     {
         public int Id { get; set; }

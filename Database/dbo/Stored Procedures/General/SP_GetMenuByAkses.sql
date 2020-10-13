@@ -6,6 +6,7 @@ AS
 if(@Posisi = 1)
 begin
 	select*from DataMenu x
+	left join Role_MenuTree b on b.IdMenu = x.idMenu
 	where x.idMenu in
 	(
 		select xx.IdMenu from Role_MenuTree xx
@@ -17,10 +18,12 @@ begin
 		)
 	)
 	and Status =1
+	order by b.Urutan asc
 end
-else if(@Posisi =2)
+else if(@Posisi >=2)
 begin
-	select*from DataMenu x
+	select x.* from DataMenu x
+	left join Role_MenuTree b on b.IdMenu = x.idMenu
 	where x.idMenu in
 	(
 		select xx.IdMenu from Role_MenuTree xx
@@ -32,5 +35,6 @@ begin
 		)
 	)
 	and Status =1
+	order by b.Urutan asc
 end
 

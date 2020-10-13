@@ -17,9 +17,9 @@ AS
 
 	set @JudulBuku_Sebelum = (select JudulBuku from DataBuku where IdBook in (select IdBuku  from TransaksiPeminjamanBuku where Id = @Id))
 
-	if(@TotalSewa != 0)
+	if(@TotalSewa != 0 and (@SewaDari != @Sewasampai))
 	begin
-		if not exists((select*from TransaksiPeminjamanBuku where IdBuku = @IdBook and Status > 0 and IdUser_Penyewa = @IdUser_Penyewa and Id not in (@Id)))
+		if not exists((select*from TransaksiPeminjamanBuku where IdBuku = @IdBook and (Status >= 0 and status < 3) and IdUser_Penyewa = @IdUser_Penyewa and Id not in (@Id)))
 		begin
 			update TransaksiPeminjamanBuku
 			set IdBuku = @IdBook,

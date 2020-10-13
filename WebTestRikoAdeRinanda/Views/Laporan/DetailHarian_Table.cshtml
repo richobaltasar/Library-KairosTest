@@ -1,0 +1,82 @@
+﻿
+@model DetailHarianModel
+@{
+    GlobalFunction f = new GlobalFunction();
+}
+
+@if (Model.Error != null)
+{
+    @await Html.PartialAsync("Error", Model.Error)
+
+}
+
+<table id="myTable"
+       class="display no-wrap table table-hover table-striped table-bordered compact"
+       cellspacing="0">
+    <thead class="bg-dark text-light" style="font-family:Calibri;font-size:small;">
+        <tr>
+            <th width="30">no</th>
+            <th style="text-align:center;">TanggalTransaksi</th>
+            <th style="text-align:center;">NamaPenyewa</th>
+            <th style="text-align:center;">JudulBuku</th>
+            <th style="text-align:center;">Pengarang</th>
+            <th style="text-align:center;">JenisBuku</th>
+            <th style="text-align:center;">Days</th>
+            <th style="text-align:center;">Sewa Per Hari</th>
+            <th style="text-align:center;">Total Sewa</th>
+        </tr>
+    </thead>
+    <tbody style="font-size:small;font-family:Calibri;">
+        @{
+            int a = 0;
+            decimal GrandTotal = 0;
+            foreach (var item in Model.Listdata)
+            {
+                a++;
+                <tr>
+                    <td nowrap align="center">@a</td>
+                    <td nowrap align="left">@item.TanggalTransaksi</td>
+                    <td nowrap align="left">@item.NamaPenyewa</td>
+                    <td nowrap align="left">@item.JudulBuku</td>
+                    <td nowrap align="left">@item.Pengarang</td>
+                    <td nowrap align="left">@item.JenisBuku</td>
+                    <td nowrap align="right">@item.JumlahHari.toNumber()</td>
+                    <td nowrap align="right">@item.HargaPerHari.toNumber()</td>
+                    <td nowrap align="right">@item.TotalSewa</td>
+                </tr>
+
+                GrandTotal = GrandTotal + item.TotalSewa.toDecimal();
+            }
+        }
+    </tbody>
+    <tfoot style="font-size:small;font-family:Calibri;">
+        <tr>
+            <td align="center" colspan="7" style="font-weight:bold;">Grand Total</td>
+            <td align="right" style="font-weight:bold;">@GrandTotal.ToString().toNumber()</td>
+        </tr>
+    </tfoot>
+</table>
+<script type="text/javascript">
+    $(function () {
+        var collapsedGroups = {};
+        var table = $('#myTable').DataTable({
+            "info": false,
+            "scrollX": false,
+            "autoWidth": false,
+            "paging": false,
+            scrollY: "50vh",
+            scrollX: !0,
+            scrollCollapse: !0,
+            iDisplayLength: 100,
+            searching: false,
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5',
+                'pdfHtml5',
+                'copyHtml5',
+                'csvHtml5'
+                
+            ]
+        });
+    });
+</script>

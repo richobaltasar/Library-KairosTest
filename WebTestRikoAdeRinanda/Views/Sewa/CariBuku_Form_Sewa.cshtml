@@ -88,7 +88,7 @@
                 type: 'GET',
                 url: '@Url.Action("CariBuku_GetTotalSewa", "Sewa")' + '?Dari=' + dari + '&Sampai=' + sampai + '&Harga=' + harga,
                 success: function (res) {
-                    console.log(res);
+                    //console.log(res);
                     if (res.isValid) {
                         $("#TotalSewa").val(res.totalSewa);
                     }

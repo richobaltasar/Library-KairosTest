@@ -46,25 +46,47 @@
                                                     @dMainMenu.NamaMenu
                                                 <span class="badge badge-pill badge-cyan ml-auto">@SubMenu.Count</span>
                                                     </span>
-                                                </a>
-                                        <ul aria-expanded="false" class="collapse">
-                                            @{
-                                                foreach (var dSubMenu in SubMenu)
-                                                {
-                                                    <li><a href="@Url.Action(dSubMenu.Action,dSubMenu.Controller)">@dSubMenu.NamaMenu</a></li>
+                                            </a>
+                                            <ul aria-expanded="false" class="collapse">
+                                                @{
+                                                    foreach (var dSubMenu in SubMenu)
+                                                    {
+                                                        <li>
+                                                            @{
+                                                                var SubMenu2 = f.GetMenuByAkses(ViewData["UserId"].ToString(), dSubMenu.idMenu.ToString(), "3");
+                                                                if (SubMenu2.Count > 0)
+                                                                {
+                                                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0);" aria-expanded="false">
+                                                                        <span class="hide-menu">
+                                                                            @dSubMenu.NamaMenu
+                                                                        </span>
+                                                                    </a>
+                                                                    <ul aria-expanded="false" class="collapse">
+                                                                        @foreach (var dSubMenu2 in SubMenu2)
+                                                                        {
+                                                                            <li><a href="@Url.Action(dSubMenu2.Action,dSubMenu2.Controller)">@dSubMenu2.NamaMenu</a></li>
+                                                                        }
+                                                                    </ul>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a href="@Url.Action(dSubMenu.Action,dSubMenu.Controller)">@dSubMenu.NamaMenu</a>
+                                                                }
+                                                            }
+                                                        </li>
+                                                    }
                                                 }
-                                            }
-                                        </ul>
-                                    }
-                                    else
-                                    {
-                                        <a class="waves-effect waves-dark" href="@Url.Action(dMainMenu.Action,dMainMenu.Controller)" aria-expanded="false">
-                                            <img src="~/@dMainMenu.Img" style="max-width:20px;" />
-                                            <span class="hide-menu">
-                                                @dMainMenu.NamaMenu
-                                            </span>
-                                        </a>
-                                    }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <a class="waves-effect waves-dark" href="@Url.Action(dMainMenu.Action,dMainMenu.Controller)" aria-expanded="false">
+                                                <img src="~/@dMainMenu.Img" style="max-width:20px;" />
+                                                <span class="hide-menu">
+                                                    @dMainMenu.NamaMenu
+                                                </span>
+                                            </a>
+                                        }
                                     }
                                 </li>
                             }

@@ -608,5 +608,57 @@ namespace WebTestRikoAdeRinanda.Function
             return res;
         }
         #endregion
+
+        #region Laporan Detail Harian
+        public async Task<List<DetailHarian>> DetailHarian_GetSearch(DetailHarianFilter Filter)
+        {
+            var res = new List<DetailHarian>();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_DetailHarian_GetSearch " +
+                        "@TglTrxFrom='" + Filter.TglTrxFrom + "'," +
+                        "@TglTrxUntil='" + Filter.TglTrxUntil + "'" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var d = new DetailHarian();
+                                string SewaFrom = reader["SewaDari"].ToString();
+                                string SewaUntil = reader["Sewasampai"].ToString();
+                                
+                                d.JumlahHari = GF.GetDiffDays(SewaFrom, SewaUntil).ToString();
+                                d.NamaPenyewa = reader["NamaPenyewa"].ToString();
+                                d.JudulBuku = reader["JudulBuku"].ToString();
+                                d.Pengarang = reader["Pengarang"].ToString();
+                                d.JenisBuku = reader["JenisBuku"].ToString();
+                                d.HargaPerHari = reader["HargaSewaPerHari"].ToString();
+                                d.TanggalTransaksi = reader["TanggalTransaksi"].ToString();
+                                d.TotalSewa = reader["TotalSewa"].ToString();
+                                d.KasirTerimaUang = reader["KasirTerimaUang"].ToString();
+                                d.UangKembalian = reader["UangKembalian"].ToString();
+                                d.NamaKasir = reader["NamaKasir"].ToString();
+                                d.TanggalPengembalian = reader["TanggalPengembalian"].ToString();
+                                res.Add(d);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        #endregion
     }
 }
