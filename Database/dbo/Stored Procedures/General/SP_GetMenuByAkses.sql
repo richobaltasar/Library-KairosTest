@@ -5,12 +5,13 @@
 AS
 if(@Posisi = 1)
 begin
-	select*from DataMenu
-	where idMenu in
+	select*from DataMenu x
+	where x.idMenu in
 	(
-		select idMenu from Role_MenuTree where IdModule = @IdModule and Posisi = @Posisi
-		and IdMenu in (
-			select distinct case when IdParent = 0 then b.IdMenu else IdParent end as IdMenu
+		select xx.IdMenu from Role_MenuTree xx
+		where IdModule = @IdModule and Posisi = @Posisi
+		and xx.IdMenu in (
+			select distinct case when IdParent = 0 then b.IdMenu else IdParent end as Id
 			from Role_MenuTree b
 			where b.IdMenu in (select a.IdMenu from GroupData_MenuAkses a where IdRole in (select RoleId from UserData where id = @IdUser))
 		)
@@ -19,12 +20,13 @@ begin
 end
 else if(@Posisi =2)
 begin
-	select*from DataMenu
-	where idMenu in
+	select*from DataMenu x
+	where x.idMenu in
 	(
-		select idMenu from Role_MenuTree where Posisi = @Posisi and IdParent = @IdModule
-		and IdMenu in (
-			select distinct case when IdParent > 0 then b.IdMenu else IdParent end as IdMenu
+		select xx.IdMenu from Role_MenuTree xx
+		where Posisi = @Posisi and IdParent = @IdModule
+		and xx.IdMenu in (
+			select distinct case when IdParent > 0 then b.IdMenu else IdParent end as Id
 			from Role_MenuTree b
 			where b.IdMenu in (select a.IdMenu from GroupData_MenuAkses a where IdRole in (select RoleId from UserData where id = @IdUser))
 		)

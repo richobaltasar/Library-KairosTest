@@ -1,4 +1,4 @@
-﻿alter PROCEDURE [dbo].[SP_KonfirmasiTransaksi_GetSearch]
+﻿CREATE PROCEDURE [dbo].[SP_KonfirmasiTransaksi_GetSearch]
 	@IdTrx nvarchar(max),
 	@NamaPenyewa nvarchar(max)
 AS

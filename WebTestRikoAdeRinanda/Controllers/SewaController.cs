@@ -723,6 +723,123 @@ namespace WebTestRikoAdeRinanda.Controllers
             }
         }
 
+
+
         #endregion
+        
+        #region PengembalianBuku
+        public async Task<IActionResult> PengembalianBuku()
+        {
+            Config.ConStr = _configuration.GetConnectionString("Db");
+            var model = new PengembalianBukuModel();
+            try
+            {
+
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var model2 = new alertLogin();
+                    return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                }
+                else
+                {
+                    ViewBag.UserId = HttpContext.Session.GetString("_UserId");
+
+                    var Filter = new TransaksiTransaksiPeminjamanBuku();
+                    model.ListData = await s.PengembalianBuku_Search(Filter);
+                    return await Task.Run(() => View(model));
+                }
+            }
+            catch (Exception ex)
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = ex.ToString();
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = Error;
+                return await Task.Run(() => View(model));
+            }
+        }
+
+        //PengembalianBuku_Search
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PengembalianBuku_Search([Bind("JudulBuku,Pengarang,JenisBuku,Nama_Penyewa")] TransaksiTransaksiPeminjamanBuku data)
+        {
+            var model = new PengembalianBukuModel();
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                    {
+                        var model2 = new alertLogin();
+                        return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                    }
+                    else
+                    {
+                        model.ListData = await s.PengembalianBuku_Search(data);
+                        return await Task.Run(() => Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "PengembalianBuku_Table", model) }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    r.MessageContent = ex.ToString();
+                    r.MessageTitle = "Error ";
+                    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    model.Error = r;
+                    model.ListData = await s.TransaksiPeminjaman_Get();
+                    return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle, html = Helper.RenderRazorViewToString(this, "PengembalianBuku_Table", data) }));
+                }
+            }
+            else
+            {
+                r.MessageContent = "State Model tidak valid";
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = r;
+                model.ListData = await s.TransaksiPeminjaman_Get();
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle, html = Helper.RenderRazorViewToString(this, "PengembalianBuku_Table", model) }));
+            }
+        }
+
+        [HttpPost, ActionName("PengembalianBuku_Submit")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PengembalianBuku_Submit(int Id)
+        {
+            var r = new ErrorViewModel();
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var model2 = new alertLogin();
+                    return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                }
+                else
+                {
+                    r = await s.PengembalianBuku_Submit(Id, HttpContext.Session.GetString("_UserId").ToInt());
+                    if (r.MessageStatus == "success")
+                    {
+                        return await Task.Run(() => Json(new { isValid = true, message = r.MessageContent, title = r.MessageTitle }));
+                    }
+                    else
+                    {
+                        var Error = new ErrorViewModel();
+                        return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                r.MessageContent = ex.ToString();
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+            }
+
+        }
+        #endregion
+
     }
 }

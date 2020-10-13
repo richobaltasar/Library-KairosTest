@@ -60,4 +60,11 @@ namespace WebTestRikoAdeRinanda.Models
         
         public ErrorViewModel Error {get;set;}
     }
+
+    public class PengembalianBukuModel
+    {
+        public List<TransaksiTransaksiPeminjamanBuku> ListData { get; set; }
+        public ErrorViewModel Error { get; set; }
+
+    }
 }

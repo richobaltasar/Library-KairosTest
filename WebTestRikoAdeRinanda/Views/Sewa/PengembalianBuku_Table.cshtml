@@ -1,5 +1,5 @@
 ﻿
-@model TransaksiTransaksiPeminjamanBukuModel
+@model PengembalianBukuModel
 @{
     GlobalFunction f = new GlobalFunction();
 }
@@ -22,12 +22,7 @@
             <th style="text-align:center;">Jumlah Hari</th>
             <th style="text-align:center;">Total Sewa</th>
             <th style="text-align:center;">Nama Penyewa</th>
-            <th style="text-align:center;">Status</th>
-            @if (Model.StatusTrx == 0)
-            {
-                <th style="text-align:center;">Action</th>
-            }
-
+            <th style="text-align:center;">Submit</th>
         </tr>
     </thead>
     <tbody style="font-size:small;font-family:Calibri;">
@@ -56,81 +51,20 @@
                     </td>
                     <td nowrap align="right">@item.TotalSewa.toNumber()</td>
                     <td nowrap align="left">@item.Nama_Penyewa</td>
-                    <td nowrap align="left">
-                        @{
-
-                            @if (item.Status == 0)
-                            {
-                                <div class="badge badge-success">Menunggu Checkout</div>
-                            }
-                            else if (item.Status == 1)
-                            {
-                                <div class="badge badge-info">Menunggu Konfirmasi</div>
-                            }
-                            else if (item.Status == 2)
-                            {
-                                <div class="badge badge-primary">Dalam Peminjaman</div>
-                            }
-                            else if (item.Status == 3)
-                            {
-                                <div class="badge badge-danger">Telah Selesai</div>
-                            }
-                        }
+                    <td nowrap align="center" width="30">
+                        <form asp-action="PengembalianBuku_Submit" asp-route-Id="@item.Id" onsubmit="return PengembalianBuku_Submit(this);" class="d-inline">
+                            <button type="submit"
+                                    class="m-portlet__nav-link btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
+                                    title="View">
+                                <i class="fa fa-play"></i>
+                            </button>
+                        </form>
                     </td>
-                    @if (Model.StatusTrx == 0)
-                    {
-                <td nowrap align="center" width="30">
-                    <form asp-action="TransaksiPeminjaman_Delete" asp-route-Id="@item.Id" onsubmit="return TransaksiPeminjaman_Delete(this);" class="d-inline">
-                        <button type="submit"
-                                class="m-portlet__nav-link btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill"
-                                title="View">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </form>
-                    <button 
-                            title="Edit"
-                            class="m-portlet__nav-link btn m-btn m-btn--hover-warning m-btn--icon m-btn--icon-only m-btn--pill" 
-                            onclick="showInPopup('@Url.Action("TransaksiPeminjaman_Form","Sewa",new { id=item.Id},Context.Request.Scheme)','Form Peminjaman')">
-                        <i class="fa fa-edit text-info"></i>
-                    </button>
-                </td>
-                    }
                     </tr>
-
-                                GrandTotal = GrandTotal + item.TotalSewa.toDecimal();
-                            }
+            }
         }
     </tbody>
-    <tfoot style="font-size:small;font-family:Calibri;">
-        <tr>
-            <td align="center" colspan="5">Grand Total</td>
-            <td align="right">@GrandTotal.ToString().toNumber()</td>
-            @if (Model.StatusTrx == 0)
-            {
-                <td align="center" colspan="3"></td>
-            }
-            else
-            {
-                <td align="center" colspan="2"></td>
-            }
-
-
-        </tr>
-    </tfoot>
 </table>
-@{
-    if (Model.StatusTrx == 0)
-    {
-        <form asp-action="TransaksiPeminjaman_Checkout" asp-route-Id="@ViewBag.UserId" onsubmit="return TransaksiPeminjaman_Checkout(this);" class="d-inline">
-            <button type="submit"
-                    class="btn btn-danger m-l-15 m-t-15"
-                    style="float:right"
-                    title="View">
-                <i class="fa fa-check"></i> Checkout
-            </button>
-        </form>
-    }
-}
 
 <script type="text/javascript">
     $(function () {

@@ -77,4 +77,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="StatusConfirm" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="22709537-da14-4b4d-8aa7-a2b3e5febdfb" ChangeDateTime="10/13/2020 12:33:43">
+    <Property Name="ElementName" Value="[dbo].[LogPengembalianBuku].[IdBku]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[LogPengembalianBuku]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IdBuku" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="31188616-eb14-4eb7-be81-a28530c57e90" ChangeDateTime="10/13/2020 14:21:49">
+    <Property Name="ElementName" Value="[dbo].[LogPengembalianBuku].[IdBuku]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[LogPengembalianBuku]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IdPeminjaman" />
+  </Operation>
 </Operations>

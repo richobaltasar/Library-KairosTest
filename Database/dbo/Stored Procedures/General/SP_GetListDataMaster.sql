@@ -112,5 +112,17 @@ BEGIN
 			) q
 			order by q.Text
 		end
+		else if(@Data ='ListNamaPenyewa')
+		begin
+			select*from 
+			(
+				select '' Text, 0 Value
+				union all
+				select
+				NamaLengkap Text,id Value
+				from UserData
+			) q
+			order by q.Text
+		end
 	end
 END

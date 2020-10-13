@@ -134,6 +134,7 @@
     <Folder Include="dbo\Stored Procedures\CariBuku" />
     <Folder Include="dbo\Stored Procedures\TransaksiPeminjaman" />
     <Folder Include="dbo\Stored Procedures\LogConfirmation" />
+    <Folder Include="dbo\Stored Procedures\PengembalianBuku" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\DataMenu.sql">
@@ -248,6 +249,9 @@
     <Build Include="dbo\Stored Procedures\TransaksiPeminjaman\SP_TransaksiPeminjaman_Get.sql" />
     <Build Include="dbo\Stored Procedures\LogConfirmation\SP_KonfirmasiTransaksi_DetailGet.sql" />
     <Build Include="dbo\Stored Procedures\LogConfirmation\SP_KonfirmasiTransaksi_Bayar.sql" />
+    <Build Include="dbo\Tables\LogPengembalianBuku.sql" />
+    <Build Include="dbo\Stored Procedures\PengembalianBuku\SP_PengembalianBuku_Search.sql" />
+    <Build Include="dbo\Stored Procedures\PengembalianBuku\SP_PengembalianBuku_Submit.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

@@ -521,5 +521,92 @@ namespace WebTestRikoAdeRinanda.Function
             return res;
         }
         #endregion
+
+        #region PengembalianBuku
+        public async Task<List<TransaksiTransaksiPeminjamanBuku>> PengembalianBuku_Search(TransaksiTransaksiPeminjamanBuku Data)
+        {
+            var res = new List<TransaksiTransaksiPeminjamanBuku>();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_PengembalianBuku_Search " +
+                        "@JudulBuku='" + Data.JudulBuku + "'," +
+                        "@Pengarang='" + Data.Pengarang + "'," +
+                        "@JenisBuku='" + Data.JenisBuku + "'," +
+                        "@Nama_Penyewa='" + Data.Nama_Penyewa + "'" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var d = new TransaksiTransaksiPeminjamanBuku();
+                                d.Id = reader["Id"].ToString().ToInt();
+                                d.IdBuku = reader["IdBuku"].ToString().ToInt();
+                                d.SewaDari = reader["SewaDari"].ToString();
+                                d.Sewasampai = reader["Sewasampai"].ToString();
+                                d.TotalSewa = reader["TotalSewa"].ToString();
+                                d.Status = reader["Status"].ToString().ToInt();
+                                d.IdUser_Penyewa = reader["IdUser_Penyewa"].ToString().ToInt();
+                                d.HargaSewaPerHari = reader["HargaSewaPerHari"].ToString();
+                                d.Img = reader["Img"].ToString();
+                                d.JenisBuku = reader["JenisBuku"].ToString();
+                                d.JudulBuku = reader["JudulBuku"].ToString();
+                                d.Pengarang = reader["Pengarang"].ToString();
+                                d.Nama_Penyewa = reader["Nama_Penyewa"].ToString();
+                                res.Add(d);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+
+        public async Task<ErrorViewModel> PengembalianBuku_Submit(int Id,int IdUser)
+        {
+            var res = new ErrorViewModel();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_PengembalianBuku_Submit @Id=" + Id.ToString() + ",@IdUser="+IdUser.ToString()+"" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                res.MessageTitle = reader["Title"].ToString();
+                                res.MessageContent = reader["Message"].ToString();
+                                res.MessageStatus = reader["Status"].ToString();
+                                res.RequestId = reader["Id"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        #endregion
     }
 }

@@ -2,7 +2,7 @@
 --exec SP_KonfirmasiTransaksi_Bayar @IdTrx=5,@CreateDate='13/10/2020 01:19:25',
 --@IdPenyewa=1,@NamaPenyewa='Riko Ade Rinanda',@Qty=3,@TotalSewa='220,000',
 --@StatusConfirm=0,@KasirTerimaUang='300,000',@UangKembalian='80,000',@IdKasir=1
-ALTER PROCEDURE [dbo].[SP_KonfirmasiTransaksi_Bayar]
+CREATE PROCEDURE [dbo].[SP_KonfirmasiTransaksi_Bayar]
 	@IdTrx bigint,
 	@CreateDate nvarchar(max),
 	@IdPenyewa bigint,
