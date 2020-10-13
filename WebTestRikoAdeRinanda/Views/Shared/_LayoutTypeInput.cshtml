@@ -16,9 +16,9 @@
                        style="text-align:right;"
                        @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
                        @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
-                       class="form-control input-element">
+                       class="form-control">
                 <script type="text/javascript">
-                    var cleave = new Cleave('.input-element', {
+                    var cleave = new Cleave('#@Model.Id', {
                         numeral: true,
                         numeralThousandsGroupStyle: 'thousand'
                     });
@@ -31,9 +31,9 @@
                        value="@Model.ValueInput"
                        @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
                        @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
-                       class="form-control input-element">
+                       class="form-control">
                 <script type="text/javascript">
-                    var cleave = new Cleave('.input-element', {
+                    var cleave = new Cleave('#@Model.Id', {
                         blocks: [4, 4, 4, 4, 4],
                         uppercase: true
                     });
@@ -46,9 +46,9 @@
                        value="@Model.ValueInput"
                        @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
                        @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
-                       class="form-control input-phone">
+                       class="form-control">
                 <script type="text/javascript">
-                    var cleavePhone = new Cleave('.input-phone', {
+                    var cleavePhone = new Cleave('#@Model.Id', {
                         phone: true,
                         phoneRegionCode: 'ID'
                     });

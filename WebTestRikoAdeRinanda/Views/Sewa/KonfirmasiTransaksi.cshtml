@@ -6,7 +6,7 @@
     var formData = new FormMasterData();
 }
 
-@model TransaksiTransaksiPeminjamanBukuModel
+@model LogConfirmationModel
 @{
     if (Model.Error == null)
     {
@@ -24,7 +24,7 @@
 
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Transaksi Peminjaman</h4>
+                <h4 class="text-themecolor">Konfirmasi Transaksi</h4>
             </div>
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
@@ -40,11 +40,6 @@
             <div class="col-12">
                 <div class="card rounded">
                     <div class="card-header" style="background-color:white;">
-                        <a href="@Url.Action("CariBuku","Sewa")"
-                            class="btn btn-info m-l-15"
-                            style="float:right">
-                            <i class="fa fa-plus-circle"></i> Pinjam
-                        </a>
                         <button type="button" class="btn btn-outline-info m-l-15"
                                 style="float:right"
                                 data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -56,9 +51,9 @@
                             <div class="card">
                                 <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div class="card-body">
-                                        <form asp-action="TransaksiPeminjaman_Search" id="TransaksiPeminjaman_Search" style="margin-top:-10px;">
+                                        <form asp-action="KonfirmasiTransaksi_Search" id="KonfirmasiTransaksi_Search" style="margin-top:-10px;">
                                             @{
-                                                formData.Template = f.GetFormLayoutForFilter("Form Transaksi Peminjaman Filter");
+                                                formData.Template = f.GetFormLayoutForFilter("Form KonfirmasiTransaksi");
                                                 formData.ColField = 4;
                                                 @await Html.PartialAsync("_LayoutFormFilter", formData)
                                                 <button type="submit" class="btn waves-effect waves-light btn-rounded btn-outline-primary">
@@ -73,7 +68,7 @@
                         </div>
                         <div style="margin-top:-30px;">
                             <div id="view-all">
-                                @await Html.PartialAsync("TransaksiPeminjaman_Table", Model)
+                                @await Html.PartialAsync("KonfirmasiTransaksi_Table", Model)
                             </div>
                         </div>
                     </div>
@@ -84,7 +79,7 @@
         <div class="modal" role="dialog" id="form-modal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header bg-info" style="padding: 10px 10px 10px 10px;">
+                    <div class="modal-header bg-dark" style="padding: 10px 10px 10px 10px;">
                         <p class="modal-title text-white">Modal title</p>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -112,7 +107,7 @@
                     }
                 });
             }
-            TransaksiPeminjaman_Save = form => {
+            KonfirmasiTransaksi_Bayar = form => {
                 try {
                     $(".preloader").fadeIn();
                     var Data = new FormData(form);
@@ -125,30 +120,36 @@
                         success: function (res) {
                             console.log(res);
                             if (res.isValid) {
-                                $('#TransaksiPeminjaman_Search').submit();
+                                Swal.fire(
+                                    'Transaksi ' + res.title+' !',
+                                    '' + res.message+'',
+                                    //+ res.message,
+                                    'success'
+                                )
+
+                                $('#KonfirmasiTransaksi_Search').submit();
                                 $('#form-modal .modal-body').html('');
                                 $('#form-modal .modal-title').html('');
                                 $('#form-modal').modal('hide');
-                                $.notify('submited Successfully', { globalPosition: 'top center', className: 'success' })
+                                
                             }
                             else {
-                                $("#title-error").text(res.title);
-                                $("#message_error").text(res.message);
-                                $("#error-alert").show();
-                                $("#error-alert").fadeTo(10000, 500).slideUp(500, function () {
-                                    $("#error-alert").slideUp(500);
-                                });
+                                Swal.fire(
+                                    'Transaksi ' + res.title + ' !',
+                                    '' + res.message + '',
+                                    //+ res.message,
+                                    'danger'
+                                )
                             }
                         },
                         error: function (xhr, status, error) {
                             var err = eval("(" + xhr.responseText + ")");
-                            alert(err.Message);
-                            console.log(err);
-                            $("#title-error").text("Sorry");
-                            $("#message_error").text("ERROR !! " + err.responseText);
-                            $("#error-alert").fadeTo(3000, 500).slideUp(500, function () {
-                                $("#error-alert").slideUp(500);
-                            });
+                            Swal.fire(
+                                'Sorry!',
+                                '' + err.responseText + '',
+                                //+ res.message,
+                                'danger'
+                            )
                         }
                     })
                     //to prevent default form submit event
@@ -157,16 +158,17 @@
                 } catch (ex) {
                     console.log(ex)
                     $(".preloader").fadeOut();
-                    $("#title-error").text("Sorry");
-                    $("#message_error").text("ERROR !! ");
-                    $("#error-alert").fadeTo(3000, 500).slideUp(500, function () {
-                        $("#error-alert").slideUp(500);
-                    });
+                    Swal.fire(
+                        'Sorry!',
+                        '' + ex.responseText + '',
+                        //+ res.message,
+                        'danger'
+                    )
                 }
             }
             
             $(function () {
-                $("#TransaksiPeminjaman_Search").submit(function (e) {
+                $("#KonfirmasiTransaksi_Search").submit(function (e) {
                     try {
                         e.preventDefault();
                         var Data = new FormData(document.querySelector('form'))

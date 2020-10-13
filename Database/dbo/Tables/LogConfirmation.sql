@@ -4,5 +4,9 @@
     [CreateDate] NVARCHAR(20) NULL, 
     [IdPenyewa] BIGINT NULL, 
     [Qty] FLOAT NULL, 
-    [TotalSewa] FLOAT NULL
+    [TotalSewa] FLOAT NULL, 
+    [StatusConfirm] BIGINT NULL, 
+    [KasirTerimaUang] FLOAT NULL, 
+    [UangKembalian] FLOAT NULL, 
+    [IdKasir] BIGINT NULL
 )

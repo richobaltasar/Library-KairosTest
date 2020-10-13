@@ -335,5 +335,191 @@ namespace WebTestRikoAdeRinanda.Function
             return res;
         }
         #endregion
+
+        #region LogConfirmation
+        public async Task<List<logConfirmation>> KonfirmasiTransaksi_GetSearch(logConfirmation Data)
+        {
+            var res = new List<logConfirmation>();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_KonfirmasiTransaksi_GetSearch " +
+                        "@IdTrx='" + Data.IdTrx + "'," +
+                        "@NamaPenyewa='" + Data.NamaPenyewa + "'" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var d = new logConfirmation();
+                                d.IdTrx = reader["IdTrx"].ToString().ToInt();
+                                d.CreateDate = reader["CreateDate"].ToString();
+                                d.IdPenyewa = reader["IdPenyewa"].ToString().ToInt();
+                                d.NamaPenyewa = reader["NamaPenyewa"].ToString();
+                                d.Qty = reader["Qty"].ToString().ToInt();
+                                d.StatusConfirm = reader["StatusConfirm"].ToString().ToInt();
+                                d.TotalSewa = reader["TotalSewa"].ToString().toNumber();
+                                res.Add(d);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        public async Task<logConfirmation> KonfirmasiTransaksi_GetById(int Id)
+        {
+            var res = new logConfirmation();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_KonfirmasiTransaksi_GetById @Id=" + Id + "" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                res.CreateDate = reader["CreateDate"].ToString();
+                                res.IdPenyewa = reader["IdPenyewa"].ToString().ToInt();
+                                res.IdTrx = reader["IdTrx"].ToString().ToInt();
+                                res.NamaPenyewa = reader["NamaPenyewa"].ToString();
+                                res.Qty = reader["Qty"].ToString().ToInt();
+                                res.StatusConfirm = reader["StatusConfirm"].ToString().ToInt();
+                                res.TotalSewa = reader["TotalSewa"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        public async Task<List<TransaksiTransaksiPeminjamanBuku>> KonfirmasiTransaksi_DetailGet(int Id)
+        {
+            var res = new List<TransaksiTransaksiPeminjamanBuku>();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_KonfirmasiTransaksi_DetailGet " +
+                        "@Id="+Id+"" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var d = new TransaksiTransaksiPeminjamanBuku();
+                                d.Id = reader["Id"].ToString().ToInt();
+                                d.IdBuku = reader["IdBuku"].ToString().ToInt();
+                                d.SewaDari = reader["SewaDari"].ToString();
+                                d.Sewasampai = reader["Sewasampai"].ToString();
+                                d.TotalSewa = reader["TotalSewa"].ToString();
+                                d.Status = reader["Status"].ToString().ToInt();
+                                d.IdUser_Penyewa = reader["IdUser_Penyewa"].ToString().ToInt();
+                                d.HargaSewaPerHari = reader["HargaSewaPerHari"].ToString();
+                                d.Img = reader["Img"].ToString();
+                                d.JenisBuku = reader["JenisBuku"].ToString();
+                                d.JudulBuku = reader["JudulBuku"].ToString();
+                                d.Pengarang = reader["Pengarang"].ToString();
+                                res.Add(d);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        public async Task<ErrorViewModel> KonfirmasiTransaksi_Bayar(logConfirmation Data)
+        {
+            var res = new ErrorViewModel();
+            try
+            {
+                Data.TotalSewa = Data.TotalSewa.toDecimal().ToString();
+                Data.KasirTerimaUang = Data.KasirTerimaUang.toDecimal().ToString();
+                Data.UangKembalian = Data.UangKembalian.toDecimal().ToString();
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_KonfirmasiTransaksi_Bayar ";
+                    Type type = Data.GetType();
+                    PropertyInfo[] props = type.GetProperties();
+                    foreach (var p in props)
+                    {
+                        if (null != p && p.CanWrite)
+                        {
+                            if (p.Name != "" && p.Name != "Error" && p.PropertyType.Name.ToString() != "IFormFile")
+                            {
+                                string param = "";
+                                if (p.PropertyType.Name.ToString() == "String")
+                                {
+                                    var val = p.GetValue(Data) ?? "";
+                                    param = "@" + p.Name + "='" + val.ToString() + "',";
+                                }
+                                else
+                                {
+                                    param = "@" + p.Name + "=" + p.GetValue(Data).ToString() + ",";
+                                }
+                                sql = sql + param;
+                            }
+                        }
+                    }
+
+                    sql = sql.RemoveLast(",");
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                res.MessageTitle = reader["Title"].ToString();
+                                res.MessageContent = reader["Message"].ToString();
+                                res.MessageStatus = reader["Status"].ToString();
+                                res.RequestId = reader["Id"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        #endregion
     }
 }

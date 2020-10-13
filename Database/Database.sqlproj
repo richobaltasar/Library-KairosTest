@@ -133,6 +133,7 @@
     <Folder Include="dbo\Stored Procedures\BukuData" />
     <Folder Include="dbo\Stored Procedures\CariBuku" />
     <Folder Include="dbo\Stored Procedures\TransaksiPeminjaman" />
+    <Folder Include="dbo\Stored Procedures\LogConfirmation" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\DataMenu.sql">
@@ -232,7 +233,6 @@
     <Build Include="dbo\Stored Procedures\BukuData\SP_BukuData_Get_ById.sql" />
     <Build Include="dbo\Tables\TransaksiPeminjamanBuku.sql" />
     <Build Include="dbo\Stored Procedures\CariBuku\SP_CariBuku_GetSearch.sql" />
-    <Build Include="dbo\Stored Procedures\General\sp_FindStringInTable_with_flag.sql" />
     <Build Include="dbo\Stored Procedures\CariBuku\SP_FormPeminjaman_GetById.sql" />
     <Build Include="dbo\Stored Procedures\General\SP_GetDateTime.sql" />
     <Build Include="dbo\Stored Procedures\General\SP_GetDiffDays.sql" />
@@ -243,6 +243,11 @@
     <Build Include="dbo\Stored Procedures\TransaksiPeminjaman\SP_TransaksiPeminjaman_GetById.sql" />
     <Build Include="dbo\Stored Procedures\TransaksiPeminjaman\SP_CariBuku_UpdateCart.sql" />
     <Build Include="dbo\Tables\LogConfirmation.sql" />
+    <Build Include="dbo\Stored Procedures\LogConfirmation\SP_KonfirmasiTransaksi_GetSearch.sql" />
+    <Build Include="dbo\Stored Procedures\LogConfirmation\SP_KonfirmasiTransaksi_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\TransaksiPeminjaman\SP_TransaksiPeminjaman_Get.sql" />
+    <Build Include="dbo\Stored Procedures\LogConfirmation\SP_KonfirmasiTransaksi_DetailGet.sql" />
+    <Build Include="dbo\Stored Procedures\LogConfirmation\SP_KonfirmasiTransaksi_Bayar.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

@@ -559,7 +559,7 @@ namespace WebTestRikoAdeRinanda.Controllers
         public async Task<IActionResult> KonfirmasiTransaksi()
         {
             Config.ConStr = _configuration.GetConnectionString("Db");
-            var model = new TransaksiTransaksiPeminjamanBukuModel();
+            var model = new LogConfirmationModel();
             try
             {
 
@@ -572,9 +572,9 @@ namespace WebTestRikoAdeRinanda.Controllers
                 {
                     ViewBag.UserId = HttpContext.Session.GetString("_UserId");
 
-                    var Filter = new TransaksiTransaksiPeminjamanBuku();
-                    Filter.IdUser_Penyewa = HttpContext.Session.GetString("_UserId").ToInt();
-                    model.ListData = await s.TransaksiPeminjaman_GetSearch(Filter);
+                    var Filter = new logConfirmation();
+                    Filter.IdPenyewa = HttpContext.Session.GetString("_UserId").ToInt();
+                    model.ListData = await s.KonfirmasiTransaksi_GetSearch(Filter);
                     return await Task.Run(() => View(model));
                 }
             }
@@ -588,6 +588,141 @@ namespace WebTestRikoAdeRinanda.Controllers
                 return await Task.Run(() => View(model));
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> KonfirmasiTransaksi_Search([Bind("IdTrx,NamaPenyewa")] logConfirmation data)
+        {
+            var model = new LogConfirmationModel();
+            var r = new ErrorViewModel();
+            try
+            {
+                model.ListData = await s.KonfirmasiTransaksi_GetSearch(data);
+                return await Task.Run(() => Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "KonfirmasiTransaksi_Table", model) }));
+            }
+            catch (Exception ex)
+            {
+                r.MessageContent = ex.ToString();
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = r;
+
+                return await Task.Run(() => Json(new
+                {
+                    isValid = false,
+                    message = r.MessageContent,
+                    title = r.MessageTitle,
+                    html = Helper.RenderRazorViewToString(this, "KonfirmasiTransaksi_Table", model)
+                }));
+            }
+            //if (ModelState.IsValid)
+            //{
+
+            //}
+            //else
+            //{
+            //    r.MessageContent = "State Model tidak valid";
+            //    r.MessageTitle = "Error ";
+            //    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            //    model.Error = r;
+            //    return await Task.Run(() => Json(new
+            //    {
+            //        isValid = false,
+            //        message = r.MessageContent,
+            //        title = r.MessageTitle,
+            //        html = Helper.RenderRazorViewToString(this, "KonfirmasiTransaksi_Table", model)
+            //    }));
+            //}
+        }
+
+        //KonfirmasiTransaksi_FormPembayaran
+        [NoDirectAccess]
+        public async Task<IActionResult> KonfirmasiTransaksi_FormPembayaran(int id = 0)
+        {
+            var model = new KonfirmasiTransaksi_FormModel();
+            try
+            {
+                if(id>0)
+                {
+                    model.DataForm = await s.KonfirmasiTransaksi_GetById(id);
+                    model.ListData = await s.KonfirmasiTransaksi_DetailGet(id);
+                    return await Task.Run(() => View(model));
+                }
+                else
+                {
+                    var Error = new ErrorViewModel();
+                    Error.MessageContent = "Data not Exists";
+                    Error.MessageTitle = "Error ";
+                    Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    model.Error = Error;
+                    return await Task.Run(() => View(model));
+                }
+            }
+            catch (Exception ex)
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = ex.ToString();
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = Error;
+                return await Task.Run(() => View(model));
+            }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> KonfirmasiTransaksi_Bayar([Bind("IdTrx,CreateDate,IdPenyewa," +
+            "Qty,TotalSewa,StatusConfirm,NamaPenyewa,KasirTerimaUang,UangKembalian")] logConfirmation data)
+        {
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                    {
+                        var model2 = new alertLogin();
+                        return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                    }
+                    else
+                    {
+                        data.IdKasir = HttpContext.Session.GetString("_UserId").ToInt();
+                        r = await s.KonfirmasiTransaksi_Bayar(data);
+                        if (r.MessageStatus == "success")
+                        {
+                            return await Task.Run(() => Json(new { isValid = true, message = r.MessageContent, title = r.MessageTitle }));
+                        }
+                        else
+                        {
+                            var Error = new ErrorViewModel();
+                            Error.MessageContent = r.MessageContent;
+                            Error.MessageTitle = r.MessageTitle;
+                            Error.RequestId = r.RequestId;
+                            data.Error = Error;
+                            return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var Error = new ErrorViewModel();
+                    Error.MessageContent = ex.ToString();
+                    Error.MessageTitle = "Error ";
+                    Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    return await Task.Run(() => Json(new { isValid = false, message = Error.MessageContent, title = Error.MessageTitle}));
+                }
+            }
+            else
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = "State Model tidak valid";
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = Error.MessageContent, title = Error.MessageTitle}));
+            }
+        }
+
         #endregion
     }
 }

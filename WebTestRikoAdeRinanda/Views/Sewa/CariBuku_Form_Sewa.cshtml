@@ -93,7 +93,13 @@
                         $("#TotalSewa").val(res.totalSewa);
                     }
                     else {
-                        $.notify('Sorry ' + re.message, { globalPosition: 'top center', className: 'warning' })
+                        Swal.fire(
+                            'Upss, Sorry !',
+                            'Tidak dapat terhubung ke Web Services Silahkan check Internet Anda ',
+                            //+ res.message,
+                            'warning'
+                        )
+                        //$.notify('Sorry ' + res.message, { globalPosition: 'top center', className: 'warning' })
                     }
                     $(".preloader").fadeOut();
                 },
@@ -103,6 +109,7 @@
                     $(".preloader").fadeOut();
                 }
             });
+            $(".preloader").fadeOut();
         }
 
     </script>

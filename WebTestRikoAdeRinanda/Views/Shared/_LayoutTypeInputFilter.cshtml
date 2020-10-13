@@ -8,6 +8,51 @@
     {
         switch (Model.Type)
         {
+            case "selectpicker":
+                <select class="selectpicker"
+                        id="@Model.Id"
+                        name="@Model.Id"
+                        data-live-search="true"
+                        @{ if (Model.Mandatory == "1") { @Html.Raw("required")  ; } }
+                        @{ if (Model.Enable == "disable") { <text> disabled </text>  }}>
+                    @{
+                        dynamic tt = null;
+                        tt = f.GetListDataMaster(Model.ListModel);
+                        @foreach (var dd in tt)
+                        {
+                            if (dd.Value == Model.ValueInput)
+                            {
+                                <option value="@dd.Value" selected="selected" data-tokens="@dd.Value">@dd.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@dd.Value" data-tokens="@dd.Value">@dd.Text</option>
+                            }
+                        }
+                    }
+                </select>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $('.selectpicker').selectpicker();
+                    });
+                </script>
+                break;
+            case "textnumber":
+                <input type="text"
+                       id="@Model.Id"
+                       name="@Model.Id"
+                       value="@Model.ValueInput"
+                       style="text-align:right;"
+                       @{ if (Model.Mandatory == "1") { @Html.Raw(" required")  ; } }
+                       @{ if (Model.Enable == "disable") { @Html.Raw(" readonly")  }}
+                       class="form-control">
+                <script type="text/javascript">
+                    var cleave = new Cleave('#@Model.Id', {
+                        numeral: true,
+                        numeralThousandsGroupStyle: 'thousand'
+                    });
+                </script>
+                break;
             case "datepicker":
                 <input type="text"
                        name="@Model.Id"

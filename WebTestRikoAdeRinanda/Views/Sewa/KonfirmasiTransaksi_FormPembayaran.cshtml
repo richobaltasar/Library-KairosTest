@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "";
+    MasterFunction f = new MasterFunction();
+    var formData = new FormMasterData();
+}
+@model KonfirmasiTransaksi_FormModel
+@{
+    if (Model.Error == null)
+    {
+        try
+        {
+            <form asp-action="KonfirmasiTransaksi_Bayar"
+                  onsubmit="return KonfirmasiTransaksi_Bayar(this)"
+                  autocomplete="off">
+
+                @{            
+
+                    formData.Template = f.GetFormLayout("Form Pembayaran");
+                    formData.ColField = 3;
+                    if (Model != null)
+                    {
+                        formData.dbContext = Model.DataForm;
+                    }
+                    @await Html.PartialAsync("_LayoutForm", formData)
+                                   
+                    <div id="view-all-detail">
+                        @{
+                            var DataLog = new TransaksiTransaksiPeminjamanBukuModel();
+                            DataLog.ListData = Model.ListData;
+                        }
+
+                        @await Html.PartialAsync("KonfirmasiTransaksi_FormPembaran_Table", DataLog)
+                    </div>
+                                
+            
+                    <div class="alert alert-danger" id="error-alert">
+
+                        <strong id="title-error"></strong>
+                        <br />
+                        <div id="message_error" style="overflow-x:auto;"></div>
+                    </div>
+                    <hr />
+
+                    <button type="submit" class="btn btn-outline-info" style="float:right;margin-left:10px;">
+                        <span class="fa fa-save"></span> Submit
+                    </button>
+                }
+            </form>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $("#error-alert").hide();
+                    $("#KasirTerimaUang").bind("change paste keyup", function () {
+                        var TerimaUang = $(this).val().replace(",", "");
+                        var TotalSewa = $("#TotalSewa").val().replace(",", "");
+                        var total = TerimaUang - TotalSewa;
+                        if (total > 0) {
+                            $("#UangKembalian").val(addCommas(total));
+                        }
+                        else {
+                            $("#UangKembalian").val("0");
+                        }
+                    });
+                });
+                function addCommas(nStr) {
+                    nStr += '';
+                    var x = nStr.split('.');
+                    var x1 = x[0];
+                    var x2 = x.length > 1 ? '.' + x[1] : '';
+                    var rgx = /(\d+)(\d{3})/;
+                    while (rgx.test(x1)) {
+                        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+                    }
+                    return x1 + x2;
+                }
+            </script>
+        }
+        catch (Exception ex)
+        {
+            var Error = new ErrorViewModel();
+            Error.MessageContent = ex.ToString();
+            Error.MessageTitle = "Error ";
+            Error.RequestId = Activity.Current?.Id ?? "0";
+            @await Html.PartialAsync("Error", Error)
+        }
+    }
+    else
+    {
+        @await Html.PartialAsync("Error", Model.Error)
+    }
+}
+
