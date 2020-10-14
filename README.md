@@ -2,7 +2,7 @@
 .NET DEVELOPER TECHNICAL SKILL TEST
 
 Langkah-langkah menjalankan solution :
-1. Clone source code pada link berikut : https://github.com/richobaltasar/Library-KairosTest atau download data attachment pada email
+1. Clone source code pada link berikut : https://github.com/richobaltasar/Library-KairosTest
 2. Extract file lalu akan terdapat File :
    - WebTestRikoAdeRinanda.sln -- ini file Solution
    - DB -- ini adalah file backup database
