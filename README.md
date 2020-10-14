@@ -27,13 +27,13 @@ Langkah-langkah menjalankan solution :
 
 # <--- User Info ---> #
 # Administrator #
-  *username : root*
-  *password : q1w2*
+  -*username : root*
+  -*password : q1w2*
 # Penyewa #
-  1. *username : riko*
-     *password : q1w2*
-  2. *username : guest*
-     *password : q1w2*
+  1. -*username : riko*
+     -*password : q1w2*
+  2. -*username : guest*
+     -*password : q1w2*
 
 # <-- Menu Function -->
 1.CariBuku : untuk mencari buku yang ingin disewa oleh penyewa. cara nya : search buku yang ingin dipinjam lalu tekan tombol pinjam dan 
