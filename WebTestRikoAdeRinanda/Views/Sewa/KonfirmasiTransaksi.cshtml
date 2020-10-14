@@ -19,6 +19,13 @@
         <link href="~/assets/datatables/rowGroup.dataTables.min.css" rel="stylesheet" />
         <script src="~/assets/datatables/dataTables.rowGroup.min.js"></script>
 
+        <script src="~/assets/DataTableExport/dataTables.buttons.min.js"></script>
+        <script src="~/assets/DataTableExport/jszip.min.js"></script>
+        <script src="~/assets/DataTableExport/pdfmake.min.js"></script>
+        <script src="~/assets/DataTableExport/vfs_fonts.js"></script>
+        <script src="~/assets/DataTableExport/buttons.html5.min.js"></script>
+        <link href="~/assets/DataTableExport/buttons.dataTables.min.css" rel="stylesheet" />
+
         <script src="~/assets/dropify/dropify.min.js"></script>
         <link href="~/assets/dropify/dropify.min.css" rel="stylesheet" />
 
@@ -29,8 +36,8 @@
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Master</a></li>
-                        <li class="breadcrumb-item active">Transaksi Peminjaman</li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Transaksi</a></li>
+                        <li class="breadcrumb-item active">Konfirmasi Transaksi</li>
                     </ol>
                 </div>
             </div>
@@ -121,8 +128,8 @@
                             console.log(res);
                             if (res.isValid) {
                                 Swal.fire(
-                                    'Transaksi ' + res.title+' !',
-                                    '' + res.message+'',
+                                    'Transaksi ' + res.title + ' !',
+                                    '' + res.message + '',
                                     //+ res.message,
                                     'success'
                                 )
@@ -131,7 +138,7 @@
                                 $('#form-modal .modal-body').html('');
                                 $('#form-modal .modal-title').html('');
                                 $('#form-modal').modal('hide');
-                                
+
                             }
                             else {
                                 Swal.fire(
@@ -166,7 +173,7 @@
                     )
                 }
             }
-            
+
             $(function () {
                 $("#KonfirmasiTransaksi_Search").submit(function (e) {
                     try {

@@ -1,12 +1,13 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@model SummaryHarianModel
 @{
     MasterFunction f = new MasterFunction();
     var formData = new FormMasterData();
 }
 
-@model PengembalianBukuModel
+
 @{
     if (Model.Error == null)
     {
@@ -26,32 +27,27 @@
         <script src="~/assets/DataTableExport/buttons.html5.min.js"></script>
         <link href="~/assets/DataTableExport/buttons.dataTables.min.css" rel="stylesheet" />
 
+
         <script src="~/assets/dropify/dropify.min.js"></script>
         <link href="~/assets/dropify/dropify.min.css" rel="stylesheet" />
 
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Pengembalian Buku</h4>
+                <h4 class="text-themecolor">Summary Harian</h4>
             </div>
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Transaksi</a></li>
-                        <li class="breadcrumb-item active">Pengembalian Buku</li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Laporan</a></li>
+                        <li class="breadcrumb-item active">Summary Harian</li>
                     </ol>
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-12">
                 <div class="card rounded">
                     <div class="card-header" style="background-color:white;">
-                        @*<a href="@Url.Action("CariBuku","Sewa")"
-                               class="btn btn-info m-l-15"
-                               style="float:right">
-                                <i class="fa fa-plus-circle"></i> Pinjam
-                            </a>*@
                         <button type="button" class="btn btn-outline-info m-l-15"
                                 style="float:right"
                                 data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -63,9 +59,9 @@
                             <div class="card">
                                 <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div class="card-body">
-                                        <form asp-action="PengembalianBuku_Search" id="PengembalianBuku_Search" style="margin-top:-10px;">
+                                        <form asp-action="SummaryHarian_Search" id="SummaryHarian_Search" style="margin-top:-10px;">
                                             @{
-                                                formData.Template = f.GetFormLayoutForFilter("Form PengembalianBuku Filter");
+                                                formData.Template = f.GetFormLayoutForFilter("Form SummaryHarian Filter");
                                                 formData.ColField = 4;
                                                 @await Html.PartialAsync("_LayoutFormFilter", formData)
                                                 <button type="submit" class="btn waves-effect waves-light btn-rounded btn-outline-primary">
@@ -80,7 +76,7 @@
                         </div>
                         <div style="margin-top:-30px;">
                             <div id="view-all">
-                                @await Html.PartialAsync("PengembalianBuku_Table", Model)
+                                @await Html.PartialAsync("SummaryHarian_Table", Model)
                             </div>
                         </div>
                     </div>
@@ -105,64 +101,8 @@
         </div>
 
         <script type="text/javascript">
-            PengembalianBuku_Submit = form => {
-                Swal.fire({
-                    title: 'Warning',
-                    text: 'Apakah kamu yakin melakukan submit pengembalian buku ini?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, return this book!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        try {
-                            $.ajax({
-                                type: 'POST',
-                                url: form.action,
-                                data: new FormData(form),
-                                contentType: false,
-                                processData: false,
-                                success: function (res) {
-                                    if (res.isValid) {
-                                        $('#PengembalianBuku_Search').submit();
-                                        Swal.fire(
-                                            'Retur ' + res.title + '!',
-                                            '' + res.message + '',
-                                            'success'
-                                        );
-                                    }
-                                    else {
-                                        Swal.fire(
-                                            'Retur ' + res.title + '!',
-                                            '' + res.message + '',
-                                            'error'
-                                        );
-                                    }
-                                },
-                                error: function (err) {
-                                    Swal.fire(
-                                        'Sorry !',
-                                        '' + err.responseText + '',
-                                        'error'
-                                    );
-                                }
-                            })
-                        } catch (ex) {
-                            Swal.fire(
-                                'Sorry !',
-                                '' + ex.message + '',
-                                'error'
-                            );
-                        }
-                    }
-                });
-                $(".preloader").fadeOut();
-                //prevent default form submit event
-                return false;
-            }
             $(function () {
-                $("#PengembalianBuku_Search").submit(function (e) {
+                $("#SummaryHarian_Search").submit(function (e) {
                     try {
                         e.preventDefault();
                         var Data = new FormData(document.querySelector('form'))
@@ -178,21 +118,34 @@
                                     $('#view-all').html(res.html)
                                 }
                                 else {
-                                    alert(res.title + "/n" + res.message);
+                                    //alert(res.title + "/n" + res.message);
+                                    Swal.fire(
+                                        'Transaksi ' + res.title + ' !',
+                                        '' + res.message + '',
+                                        //+ res.message,
+                                        'error'
+                                    )
                                 }
                             },
                             error: function (xhr, status, error) {
                                 var err = eval("(" + xhr.responseText + ")");
-                                alert(err.Message);
+                                Swal.fire(
+                                    'Sorry!',
+                                    '' + err.message + '',
+                                    //+ res.message,
+                                    'error'
+                                )
                             }
                         })
                         //to prevent default form submit event
                         return false;
                     }
                     catch (ex) {
-                        $("#error-alert").fadeTo(3000, 500).slideUp(500, function () {
-                            $("#error-alert").slideUp(500);
-                        });
+                        Swal.fire(
+                            'Sorry!',
+                            '' + ex.message + '',
+                            'error'
+                        )
                     }
                 });
             });

@@ -89,6 +89,7 @@
                 url: '@Url.Action("CariBuku_GetTotalSewa", "Sewa")' + '?Dari=' + dari + '&Sampai=' + sampai + '&Harga=' + harga,
                 success: function (res) {
                     //console.log(res);
+                    $(".preloader").fadeOut();
                     if (res.isValid) {
                         $("#TotalSewa").val(res.totalSewa);
                     }
@@ -109,7 +110,6 @@
                     $(".preloader").fadeOut();
                 }
             });
-            $(".preloader").fadeOut();
         }
 
     </script>

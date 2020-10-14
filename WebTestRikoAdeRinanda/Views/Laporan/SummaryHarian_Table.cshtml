@@ -1,5 +1,5 @@
 ﻿
-@model DetailHarianModel
+@model SummaryHarianModel
 @{
     GlobalFunction f = new GlobalFunction();
 }
@@ -16,14 +16,13 @@
     <thead class="bg-dark text-light" style="font-family:Calibri;font-size:small;">
         <tr>
             <th width="30">no</th>
-            <th style="text-align:center;">TanggalTransaksi</th>
-            <th style="text-align:center;">NamaPenyewa</th>
-            <th style="text-align:center;">JudulBuku</th>
-            <th style="text-align:center;">Pengarang</th>
-            <th style="text-align:center;">JenisBuku</th>
-            <th style="text-align:center;">Days</th>
-            <th style="text-align:center;">Sewa Per Hari</th>
+            <th style="text-align:center;">Tanggal Transaksi</th>
+            <th style="text-align:center;">Nama Penyewa</th>
+            <th style="text-align:center;">Total Buku</th>
             <th style="text-align:center;">Total Sewa</th>
+            <th style="text-align:center;">Nama Kasir</th>
+            <th style="text-align:center;">Pembayaran</th>
+            <th style="text-align:center;">Uang Kembalian</th>
         </tr>
     </thead>
     <tbody style="font-size:small;font-family:Calibri;">
@@ -37,12 +36,11 @@
                     <td nowrap align="center">@a</td>
                     <td nowrap align="left">@item.TanggalTransaksi</td>
                     <td nowrap align="left">@item.NamaPenyewa</td>
-                    <td nowrap align="left">@item.JudulBuku</td>
-                    <td nowrap align="left">@item.Pengarang</td>
-                    <td nowrap align="left">@item.JenisBuku</td>
-                    <td nowrap align="right">@item.JumlahHari.toNumber()</td>
-                    <td nowrap align="right">@item.HargaPerHari.toNumber()</td>
-                    <td nowrap align="right">@item.TotalSewa.toNumber()</td>
+                    <td nowrap align="left">@item.TotalBuku</td>
+                    <td nowrap align="right">@item.TotalSewa.toNumber().Replace(".", ",")</td>
+                    <td nowrap align="left">@item.NamaKasir</td>
+                    <td nowrap align="right">@item.KasirTerimaUang.toNumber().Replace(".", ",")</td>
+                    <td nowrap align="right">@item.UangKembalian.toNumber().Replace(".", ",")</td>
                 </tr>
 
                 GrandTotal = GrandTotal + item.TotalSewa.toDecimal();
@@ -51,8 +49,9 @@
     </tbody>
     <tfoot style="font-size:small;font-family:Calibri;">
         <tr>
-            <td align="center" colspan="7" style="font-weight:bold;">Grand Total</td>
-            <td align="right" style="font-weight:bold;">@GrandTotal.ToString().toNumber()</td>
+            <td align="center" colspan="4" style="font-weight:bold;">Grand Total</td>
+            <td align="right" style="font-weight:bold;">@GrandTotal.ToString().toNumber().Replace(".",",")</td>
+            <td align="center" colspan="3" style="font-weight:bold;"></td>
         </tr>
     </tfoot>
 </table>

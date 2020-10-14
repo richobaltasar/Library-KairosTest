@@ -69,7 +69,7 @@ namespace WebTestRikoAdeRinanda.Function
             try
             {
                 string number = Regex.Replace(value, "[^.0-9]", "");
-                res = Convert.ToDecimal(number).ToString("#,##0");
+                res = Convert.ToDecimal(number).ToString("#,##0").Replace(".", ",");
             }
             catch (Exception ex)
             {

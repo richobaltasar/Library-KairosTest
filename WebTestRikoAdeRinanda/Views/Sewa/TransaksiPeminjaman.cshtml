@@ -19,6 +19,13 @@
         <link href="~/assets/datatables/rowGroup.dataTables.min.css" rel="stylesheet" />
         <script src="~/assets/datatables/dataTables.rowGroup.min.js"></script>
 
+        <script src="~/assets/DataTableExport/dataTables.buttons.min.js"></script>
+        <script src="~/assets/DataTableExport/jszip.min.js"></script>
+        <script src="~/assets/DataTableExport/pdfmake.min.js"></script>
+        <script src="~/assets/DataTableExport/vfs_fonts.js"></script>
+        <script src="~/assets/DataTableExport/buttons.html5.min.js"></script>
+        <link href="~/assets/DataTableExport/buttons.dataTables.min.css" rel="stylesheet" />
+
         <script src="~/assets/dropify/dropify.min.js"></script>
         <link href="~/assets/dropify/dropify.min.css" rel="stylesheet" />
 
@@ -29,58 +36,58 @@
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Master</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Transaksi</a></li>
                         <li class="breadcrumb-item active">Transaksi Peminjaman</li>
                     </ol>
                 </div>
             </div>
         </div>
         <div class="row">
-                                    <div class="col-12">
-                                        <div class="card rounded">
-                                            <div class="card-header" style="background-color:white;">
-                                                <a href="@Url.Action("CariBuku","Sewa")"
-                                                   class="btn btn-info m-l-15"
-                                                   style="float:right">
-                                                    <i class="fa fa-plus-circle"></i> Pinjam
-                                                </a>
-                                                <button type="button" class="btn btn-outline-info m-l-15"
-                                                        style="float:right"
-                                                        data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                    <i class="fa fa-filter"></i> Set Filter
+            <div class="col-12">
+                <div class="card rounded">
+                    <div class="card-header" style="background-color:white;">
+                        <a href="@Url.Action("CariBuku","Sewa")"
+                           class="btn btn-info m-l-15"
+                           style="float:right">
+                            <i class="fa fa-plus-circle"></i> Pinjam
+                        </a>
+                        <button type="button" class="btn btn-outline-info m-l-15"
+                                style="float:right"
+                                data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <i class="fa fa-filter"></i> Set Filter
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion" id="accordionExample" style="margin-top:0px;">
+                            <div class="card">
+                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <form asp-action="TransaksiPeminjaman_Search" id="TransaksiPeminjaman_Search" style="margin-top:-10px;">
+                                            @{
+                                                formData.Template = f.GetFormLayoutForFilter("Form Transaksi Peminjaman Filter");
+                                                formData.ColField = 4;
+                                                @await Html.PartialAsync("_LayoutFormFilter", formData)
+                                                <button type="submit" class="btn waves-effect waves-light btn-rounded btn-outline-primary">
+                                                    <span class="fa fa-search"></span> Search
                                                 </button>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="accordion" id="accordionExample" style="margin-top:0px;">
-                                                    <div class="card">
-                                                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                                            <div class="card-body">
-                                                                <form asp-action="TransaksiPeminjaman_Search" id="TransaksiPeminjaman_Search" style="margin-top:-10px;">
-                                                                    @{
-                                                                        formData.Template = f.GetFormLayoutForFilter("Form Transaksi Peminjaman Filter");
-                                                                        formData.ColField = 4;
-                                                                        @await Html.PartialAsync("_LayoutFormFilter", formData)
-                                                                        <button type="submit" class="btn waves-effect waves-light btn-rounded btn-outline-primary">
-                                                                            <span class="fa fa-search"></span> Search
-                                                                        </button>
-                                                                    }
-                                                                </form>
-                                                                <hr />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="margin-top:-30px;">
-                                                    <div id="view-all">
-                                                        @await Html.PartialAsync("TransaksiPeminjaman_Table", Model)
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            }
+                                        </form>
+                                        <hr />
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:-30px;">
+                            <div id="view-all">
+                                @await Html.PartialAsync("TransaksiPeminjaman_Table", Model)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        
+
         <div class="modal" role="dialog" id="form-modal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">

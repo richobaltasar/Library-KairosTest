@@ -64,10 +64,12 @@
                        class="form-control">
                 <script type="text/javascript">
                 $(document).ready(function () {
+                    
                     $('#@Model.Id').datepicker({
                         format: 'dd/mm/yyyy',
-                        autoclose: true
-                    });
+                        autoclose: true,
+                        orientation: 'auto bottom'
+                    }).datepicker("setDate", 'now');;
                     $("#@Model.Id").keypress(function (e) {
                         return false;
                     });

@@ -32,7 +32,7 @@ namespace WebTestRikoAdeRinanda
                 options.Cookie.Name = ".testKairo.Session";
                 options.Cookie.SecurePolicy = CookieSecurePolicy.None;
                 options.Cookie.SameSite = SameSiteMode.Lax;
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
             });
             services
                 .AddControllersWithViews()
@@ -64,7 +64,7 @@ namespace WebTestRikoAdeRinanda
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Sewa}/{action=CariBuku}");
             });
         }
     }

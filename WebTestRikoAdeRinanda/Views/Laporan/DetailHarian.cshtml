@@ -1,12 +1,13 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@model DetailHarianModel
 @{
     MasterFunction f = new MasterFunction();
     var formData = new FormMasterData();
 }
 
-@model DetailHarianModel
+
 @{
     if (Model.Error == null)
     {
@@ -32,13 +33,13 @@
 
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Transaksi Peminjaman</h4>
+                <h4 class="text-themecolor">Detail Laporan Harian</h4>
             </div>
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Master</a></li>
-                        <li class="breadcrumb-item active">Transaksi Peminjaman</li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Laporan</a></li>
+                        <li class="breadcrumb-item active">Detail Laporan Harian</li>
                     </ol>
                 </div>
             </div>
@@ -62,12 +63,6 @@
                                             @{
                                                 formData.Template = f.GetFormLayoutForFilter("Form DetailHarian Filter");
                                                 formData.ColField = 4;
-                                                if (Model != null)
-                                                {
-                                                    var DataFilter = new DetailHarianFilter();
-                                                    DataFilter = Model.FilterData;
-                                                    formData.dbContext = DataFilter;
-                                                }
                                                 @await Html.PartialAsync("_LayoutFormFilter", formData)
                                                 <button type="submit" class="btn waves-effect waves-light btn-rounded btn-outline-primary">
                                                     <span class="fa fa-search"></span> Search

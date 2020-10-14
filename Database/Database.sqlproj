@@ -254,6 +254,7 @@
     <Build Include="dbo\Stored Procedures\PengembalianBuku\SP_PengembalianBuku_Search.sql" />
     <Build Include="dbo\Stored Procedures\PengembalianBuku\SP_PengembalianBuku_Submit.sql" />
     <Build Include="dbo\Stored Procedures\LaporanHarian\SP_DetailHarian_GetSearch.sql" />
+    <Build Include="dbo\Stored Procedures\LaporanHarian\SP_SummaryHarian_GetSearch.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

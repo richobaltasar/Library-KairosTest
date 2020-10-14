@@ -660,5 +660,48 @@ namespace WebTestRikoAdeRinanda.Function
             return res;
         }
         #endregion
+        #region Laporan SummaryHarian
+        public async Task<List<SummaryHarian>> SummaryHarian_GetSearch(SummaryHarianFilter Filter)
+        {
+            var res = new List<SummaryHarian>();
+            try
+            {
+                conn.ConnectionString = Config.ConStr;
+                using (var connection = conn)
+                {
+                    connection.Open();
+                    string sql = "exec SP_SummaryHarian_GetSearch " +
+                        "@TglTrxFrom='" + Filter.TglTrxFrom + "'," +
+                        "@TglTrxUntil='" + Filter.TglTrxUntil + "'" +
+                        "";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.CommandTimeout = 0;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var d = new SummaryHarian();
+                                d.NamaPenyewa = reader["NamaPenyewa"].ToString();
+                                d.KasirTerimaUang = reader["KasirTerimaUang"].ToString();
+                                d.NamaKasir = reader["NamaKasir"].ToString();
+                                d.TanggalTransaksi = reader["TanggalTransaksi"].ToString();
+                                d.TotalBuku = reader["TotalBuku"].ToString();
+                                d.TotalSewa = reader["TotalSewa"].ToString();
+                                d.UangKembalian = reader["UangKembalian"].ToString();
+                                res.Add(d);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return res;
+        }
+        #endregion
     }
 }

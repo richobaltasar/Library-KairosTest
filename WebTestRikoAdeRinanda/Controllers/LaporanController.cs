@@ -53,7 +53,6 @@ namespace WebTestRikoAdeRinanda.Controllers
                     Filter.TglTrxFrom = GF.GetDatetime().Left(10);
                     Filter.TglTrxUntil = GF.GetDatetime().Left(10);
                     model.Listdata = await s.DetailHarian_GetSearch(Filter);
-                    model.FilterData = Filter;
                     return await Task.Run(() => View(model));
                 }
             }
@@ -107,5 +106,77 @@ namespace WebTestRikoAdeRinanda.Controllers
         }
         #endregion
 
+        #region SummaryHarian
+        public async Task<IActionResult> SummaryHarian()
+        {
+            Config.ConStr = _configuration.GetConnectionString("Db");
+            var model = new SummaryHarianModel();
+            try
+            {
+
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var model2 = new alertLogin();
+                    return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                }
+                else
+                {
+                    ViewBag.UserId = HttpContext.Session.GetString("_UserId");
+                    var Filter = new SummaryHarianFilter();
+                    Filter.TglTrxFrom = GF.GetDatetime().Left(10);
+                    Filter.TglTrxUntil = GF.GetDatetime().Left(10);
+                    model.Listdata = await s.SummaryHarian_GetSearch(Filter);
+                    return await Task.Run(() => View(model));
+                }
+            }
+            catch (Exception ex)
+            {
+                var Error = new ErrorViewModel();
+                Error.MessageContent = ex.ToString();
+                Error.MessageTitle = "Error ";
+                Error.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                model.Error = Error;
+                return await Task.Run(() => View(model));
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SummaryHarian_Search([Bind("TglTrxFrom,TglTrxUntil")] SummaryHarianFilter data)
+        {
+            var model = new SummaryHarianModel();
+            var r = new ErrorViewModel();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                    {
+                        var model2 = new alertLogin();
+                        return await Task.Run(() => RedirectToAction("SignIn", "Home", model2));
+                    }
+                    else
+                    {
+                        model.Listdata = await s.SummaryHarian_GetSearch(data);
+                        return await Task.Run(() => Json(new { isValid = true, html = Helper.RenderRazorViewToString(this, "SummaryHarian_Table", model) }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    r.MessageContent = ex.ToString();
+                    r.MessageTitle = "Error ";
+                    r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                    return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+                }
+            }
+            else
+            {
+                r.MessageContent = "State Model tidak valid";
+                r.MessageTitle = "Error ";
+                r.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+                return await Task.Run(() => Json(new { isValid = false, message = r.MessageContent, title = r.MessageTitle }));
+            }
+        }
+        #endregion
     }
 }

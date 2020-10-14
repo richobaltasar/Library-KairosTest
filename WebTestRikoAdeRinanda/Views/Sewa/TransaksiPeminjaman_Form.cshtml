@@ -67,22 +67,23 @@
                         if ($("#SewaDari").val() > $("#Sewasampai").val()) {
                             $("#Sewasampai").val($("#SewaDari").val());
                         }
-                        SetTotaSewa(dari.val(), sampai.val(), $("#HargaSewaPerHariDetail").text().replace(".",""));
+                        SetTotaSewa(dari.val(), sampai.val(), $("#HargaSewaPerHariDetail").text().replace(".", "").replace(",",""));
 
                     });
                     $("#Sewasampai").on('changeDate', function (selected) {
-                        SetTotaSewa(dari.val(), sampai.val(), $("#HargaSewaPerHariDetail").text().replace(".", ""));
+                        //SetTotaSewa(dari.val(), sampai.val(), $("#HargaSewaPerHariDetail").text().replace(".", ""));
+                        SetTotaSewa(dari.val(), sampai.val(), $("#HargaSewaPerHariDetail").text().replace(".", "").replace(",", ""));
                     });
 
                     $('#IdBuku').on('change', function (e) {
                         var optionSelected = $("option:selected", this);
                         var valueSelected = this.value;
-
+                        $(".preloader").fadeIn();
                         $.ajax({
                             type: 'GET',
                             url: '@Url.Action("CariBuku_GetDetailBook","Sewa")?Id=' + valueSelected,
                             success: function (res) {
-                                //$(".preloader").fadeOut();
+                                $("#TotalSewa").val("");
                                 //console.log(res);
                                 $("#JudulBukuDetail").text(res.judulBuku);
                                 $("#PengarangDetail").text(res.pengarang);
@@ -92,14 +93,14 @@
                                 var currentDate = new Date();
                                 $("#SewaDari").datepicker("setDate", currentDate);
                                 $("#Sewasampai").datepicker("setDate", currentDate);
-                                $("#TotalSewa").val("");
-
+                                
+                                $(".preloader").fadeOut();
                             },
                             error: function (request, status, error) {
-                                //$(".preloader").fadeOut();
+                                $(".preloader").fadeOut();
                             }
                         });
-                        //$(".preloader").fadeOut();
+                        $(".preloader").fadeOut();
                     });
                 });
 
