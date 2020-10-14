@@ -36,8 +36,8 @@ Langkah-langkah menjalankan solution :
      -*password : q1w2*
 
 # <-- Menu Function -->
-1.CariBuku : untuk mencari buku yang ingin disewa oleh penyewa. cara nya : search buku yang ingin dipinjam lalu tekan tombol pinjam dan 
-             isi tanggal peminjaman dan tekan tombol Addlist, akan muncul popup pilihan checkout sekarang atau mau menambahkan buku ke list peminjaman lagi.
+1.CariBuku : untuk mencari buku yang ingin disewa oleh penyewa. cara nya : search buku yang ingin dipinjam lalu tekan tombol pinjam dan isi tanggal peminjaman dan tekan tombol Addlist, akan muncul popup pilihan checkout sekarang atau mau menambahkan buku ke list peminjaman lagi.
+
 2.Transaksi 
   - Peminjaman Buku : menu ini berisi list data peminjaman dengan berbagai status, jika buku telah dimasukan ke list Peminjaman, maka akan muncul pada Status "Menunggu Checkout", tekan tombol checkout diposisi bawah table untuk melakukan check dan melakukan pembayaran ke kasir sesuai popup yang tampil.
   - Konfirmasi : untuk mengkonfirmasi pembayaran penyewa yang telah melakukan checkout dari menu Peminjaman Buku, dapat difilter sesuai nama penyewa atau No. ID Transaksi.Tekan tombol pada kolom action untuk melakukan Konfirmasi pembayaran dan masukan uang yang dibayarkan penyewa dan secara automatis muncul jumlah kembalian,Tekan Tombol Submit dan Transaksi selesai dan status buku berubah menjadi "Dalam peminjaman" pada menu peminjaman Buku.
