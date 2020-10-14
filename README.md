@@ -42,13 +42,16 @@ Langkah-langkah menjalankan solution :
   - Peminjaman Buku : menu ini berisi list data peminjaman dengan berbagai status, jika buku telah dimasukan ke list Peminjaman, maka akan muncul pada Status "Menunggu Checkout", tekan tombol checkout diposisi bawah table untuk melakukan check dan melakukan pembayaran ke kasir sesuai popup yang tampil.
   - Konfirmasi : untuk mengkonfirmasi pembayaran penyewa yang telah melakukan checkout dari menu Peminjaman Buku, dapat difilter sesuai nama penyewa atau No. ID Transaksi.Tekan tombol pada kolom action untuk melakukan Konfirmasi pembayaran dan masukan uang yang dibayarkan penyewa dan secara automatis muncul jumlah kembalian,Tekan Tombol Submit dan Transaksi selesai dan status buku berubah menjadi "Dalam peminjaman" pada menu peminjaman Buku.
   - Pengembalian : menu ini untuk melakukan pengembalian buku dan jika sudah disubmit maka status pada Peminjaman Buku berubah menjadi "Telah Selesai"
+
 3.Laporan
   - Laporan Harian 
     * Detail Harian merupakan laporan peminjaman buku dengan status "Telah Selesai"
     * Summary Harian merupakan laporan transaksi peminjaman buku
+
 4.Data Master
   - Registrasi User - untuk menambah, mengubah dan menghapus Data User.
   - Buku Master - - untuk menambah, mengubah dan menghapus Data Buku.
+
 5.Setting - menu untuk memanagement module, menu, role akses group, role menu tree, Form Layout dan Data List Item.
  
     
