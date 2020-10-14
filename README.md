@@ -11,7 +11,7 @@ Langkah-langkah menjalankan solution :
 3. Restore Database pada file DB, 
    - open SQL management studio --> pada folder Databases click kanan - pilih Restore Database.
    - Rubah source pada device dan pilih file DB backup yg telah diextract.
-   - Add - pilih filename dengan all files - lalu tekan Ok dan Ok
+   - Add - pilih filename "DB" dengan all files - lalu tekan Ok dan Ok
    
 *Menggunakan Visual Studio :*
 1. Click file solution --> WebTestRikoAdeRinanda.sln, lalu di project "WebTestRikoAdeRinanda" rubah ConnectionStrings DB pada file appsettings.Development.json.
