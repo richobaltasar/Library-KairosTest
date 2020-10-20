@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB Backup", "DB Backup", "{6BD4C5A5-8F4C-4937-BBDA-6C95F5CA08B9}"
 	ProjectSection(SolutionItems) = preProject
 		G:\DB = G:\DB
+		G:\DBScript.sql = G:\DBScript.sql
 	EndProjectSection
 EndProject
 Global

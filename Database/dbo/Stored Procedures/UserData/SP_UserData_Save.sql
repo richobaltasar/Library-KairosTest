@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[SP_UserData_Save]
+﻿ALTER PROCEDURE [dbo].[SP_UserData_Save]
 	@id bigint,
 	@username nvarchar(max),
 	@password nvarchar(max),
@@ -65,7 +65,8 @@ begin
 			RoleId = @RoleId,
 			Status=@Status
 		where id=@id
-
+		
+		set @Id = @id
 		set @Title = 'Success'
 		set @Message = 'User '+ @username + ' berhasil diupdate'
 		set @MStatus = 'success'
@@ -84,13 +85,14 @@ begin
 				RoleId = @RoleId,
 				Status=@Status
 			where id=@id
-
+			set @Id = @id
 			set @Title = 'Success'
 			set @Message = 'User '+ @username + ' berhasil diupdate'
 			set @MStatus = 'success'
 		end
 		else
 		begin
+			set @Id = @id
 			set @Title = 'Sorry'
 			set @Message = 'User / Email already exists, silahkan cari nama lain'
 			set @MStatus = 'error'
